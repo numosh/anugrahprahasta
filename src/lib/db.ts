@@ -3,6 +3,9 @@ import { sql } from "@vercel/postgres";
 // Fungsi untuk memastikan tabel-tabel database tersedia
 export async function initDb() {
   try {
+    // Reset tabel untuk memastikan nama kolom ("gdriveId" case-sensitive) terbentuk secara presisi
+    await sql`DROP TABLE IF EXISTS music`;
+    
     // Membuat tabel music
     await sql`
       CREATE TABLE IF NOT EXISTS music (
@@ -12,7 +15,7 @@ export async function initDb() {
         year VARCHAR(10),
         type VARCHAR(50),
         link TEXT,
-        gdriveId VARCHAR(255)
+        "gdriveId" VARCHAR(255)
       );
     `;
 

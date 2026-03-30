@@ -29,10 +29,11 @@ export async function addMusic(formData: FormData) {
     revalidatePath("/music");
     return { success: true };
   } catch (e: any) {
-    if (e.message.includes('relation "music" does not exist')) {
+    if (e.message.includes('relation "music" does not exist') && !e.message.includes('column')) {
       return { error: "Tabel belum dibuat. Silakan klik Initialize Database." };
     }
-    return { error: e.message };
+    // Menampilkan error asli (misal kesalahan nama kolom)
+    return { error: `Internal DB Error: ${e.message}` };
   }
 }
 
