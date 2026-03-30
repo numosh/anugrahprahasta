@@ -1,0 +1,123 @@
+.container {
+  padding: var(--space-24) 0;
+  min-height: 80vh;
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+.header {
+  margin-bottom: var(--space-16);
+  text-align: center;
+}
+
+.header h1 {
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  margin-bottom: var(--space-4);
+}
+
+.header p {
+  font-size: 1.2rem;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.articleRow {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-8);
+  padding: var(--space-8);
+  background: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
+}
+
+.articleRow:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-color);
+  transform: translateX(10px);
+}
+
+.articleMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.date {
+  color: var(--text-primary);
+  font-weight: 500;
+  font-family: var(--font-inter);
+}
+
+.readTime {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.articleContent h2 {
+  font-size: 1.8rem;
+  margin-bottom: var(--space-4);
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+}
+
+.articleRow:hover h2 {
+  color: var(--accent-primary);
+}
+
+.articleContent p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-6);
+}
+
+.readMore {
+  color: var(--text-primary);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 2px solid var(--accent-primary);
+  padding-bottom: 0.2rem;
+}
+
+.readMore:hover {
+  color: var(--accent-primary);
+}
+
+.loading {
+  text-align: center;
+  padding: var(--space-16);
+  color: var(--text-secondary);
+  font-family: var(--font-outfit);
+  font-size: 1.2rem;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .articleRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  
+  .articleMeta {
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--space-4);
+  }
+}
