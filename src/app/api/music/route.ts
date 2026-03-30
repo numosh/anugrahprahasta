@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { sql } from "@vercel/postgres";
 
+export const dynamic = 'force-dynamic'; // Prevent Next.js from caching this API on Vercel
+
 export async function GET() {
   const mockMusicData = [
     {
@@ -10,7 +12,7 @@ export async function GET() {
       year: "2026",
       type: "Single",
       link: "https://soundcloud.com",
-      gdriveId: "1r_h87rM-wXmKq_3J7R9M7MhJ4b3Q9M" // Contoh ID Google Drive
+      youtubeId: "dQw4w9WgXcQ" // Contoh YouTube ID (hanya ID, bukan URL penuh)
     },
     {
       id: 2,

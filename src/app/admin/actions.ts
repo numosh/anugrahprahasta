@@ -15,14 +15,14 @@ export async function addMusic(formData: FormData) {
   
   try {
     await sql`
-      INSERT INTO music (title, description, year, type, link, "gdriveId")
+      INSERT INTO music (title, description, year, type, link, "youtubeId")
       VALUES (
         ${formData.get("title") as string},
         ${formData.get("description") as string},
         ${formData.get("year") as string},
         ${formData.get("type") as string},
         ${formData.get("link") as string},
-        ${formData.get("gdriveId") as string}
+        ${formData.get("youtubeId") as string}
       )
     `;
     revalidatePath("/admin");

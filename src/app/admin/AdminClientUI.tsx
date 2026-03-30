@@ -57,8 +57,8 @@ export default function AdminClientUI({ initialMusic }: { initialMusic: any[] })
               <input name="year" placeholder="Year" className="admin-input" required />
               <input name="type" placeholder="Type (Single/Album)" className="admin-input" required />
             </div>
-            <input name="link" placeholder="External Link (e.g. YouTube url)" className="admin-input" />
-            <input name="gdriveId" placeholder="GDrive File ID (optional)" className="admin-input" />
+            <input name="link" placeholder="External Link (e.g. Spotify url)" className="admin-input" />
+            <input name="youtubeId" placeholder="YouTube Video ID (optional, e.g. dQw4w9WgXcQ)" className="admin-input" />
             
             <button type="submit" disabled={loading} className="btn btn-primary" style={{ marginTop: '1rem' }}>
               {loading ? "Adding..." : "Publish Music"}

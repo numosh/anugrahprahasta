@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import AudioPlayer from "@/components/AudioPlayer";
+import ContactForm from "@/components/ContactForm";
 
 interface MusicItem {
   id: number;
@@ -11,7 +12,7 @@ interface MusicItem {
   year: string;
   type: string;
   link: string;
-  gdriveId?: string;
+  youtubeId?: string;
 }
 
 export default function MusicPage() {
@@ -53,29 +54,41 @@ export default function MusicPage() {
           {music.map((item, index) => (
             <article 
               key={item.id} 
-              className={`glass-panel ${styles.card} fade-in`}
+              className={`${styles.item} fade-in`}
               style={{ animationDelay: `${0.2 + (index * 0.1)}s` }}
             >
-              <div className={styles.cardHeader}>
-                <span className={styles.badge}>{item.type}</span>
-                <span className="text-muted">{item.year}</span>
+              {/* Media First (Dominant) */}
+              <div className={styles.mediaWrapper}>
+                {item.youtubeId ? (
+                  <AudioPlayer youtubeId={item.youtubeId} />
+                ) : (
+                  <div className={styles.placeholderMedia}>
+                    <span className="text-muted" style={{ fontSize: '0.9rem' }}>No Media Available</span>
+                  </div>
+                )}
               </div>
-              <h2>{item.title}</h2>
-              <p className="text-secondary">{item.description}</p>
-              
-              <div className={styles.cardFooter}>
-                <a href={item.link} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ marginBottom: "1rem", display: "inline-block" }}>
-                  View Original
-                </a>
+
+              {/* Minimalist Meta & Text Below */}
+              <div className={styles.textWrapper}>
+                <div className={styles.meta}>
+                  <span className={styles.badge}>{item.type}</span>
+                  <span className={styles.year}>{item.year}</span>
+                </div>
+                
+                <h2>{item.title}</h2>
+                <p>{item.description}</p>
               </div>
-              
-              {/* Dynamic Audio Player injected if gdriveId exists */}
-              {item.gdriveId && <AudioPlayer gdriveId={item.gdriveId} />}
               
             </article>
           ))}
         </div>
       )}
+
+      {/* Menambahkan Contact Form di bawah Music Library karena ini menjadi halaman utama */}
+      <div style={{ marginTop: '6rem' }}>
+         <ContactForm />
+      </div>
+
     </div>
   );
 }

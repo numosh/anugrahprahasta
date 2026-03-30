@@ -15,7 +15,7 @@ export async function initDb() {
         year VARCHAR(10),
         type VARCHAR(50),
         link TEXT,
-        "gdriveId" VARCHAR(255)
+        "youtubeId" VARCHAR(255)
       );
     `;
 
