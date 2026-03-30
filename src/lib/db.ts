@@ -19,17 +19,19 @@ export async function initDb() {
       );
     `;
 
-    // Membuat tabel articles
+    // Drop then Re-create Articles table for clean state
+    await sql`DROP TABLE IF EXISTS articles;`;
     await sql`
       CREATE TABLE IF NOT EXISTS articles (
         id SERIAL PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
-        description TEXT,
+        excerpt TEXT,
+        content TEXT,
         date VARCHAR(50),
-        readTime VARCHAR(50),
         link TEXT
       );
     `;
+
     console.log("Database tables initialized successfully");
     return true;
   } catch (error) {

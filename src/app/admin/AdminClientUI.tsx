@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { setupDatabase, addMusic, deleteMusic } from "./actions";
+import { setupDatabase, addMusic, deleteMusic, addArticle, deleteArticle } from "./actions";
+interface AdminClientUIProps {
+  initialMusic: any[];
+  initialArticles: any[];
+}
 
-export default function AdminClientUI({ initialMusic }: { initialMusic: any[] }) {
+export default function AdminClientUI({ initialMusic, initialArticles = [] }: AdminClientUIProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -26,6 +30,22 @@ export default function AdminClientUI({ initialMusic }: { initialMusic: any[] })
     if (res.error) setMessage(res.error);
     else {
       setMessage("Success: Music added!");
+      (e.target as HTMLFormElement).reset();
+    }
+    setLoading(false);
+  };
+
+  const handleAddArticleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+    
+    const formData = new FormData(e.currentTarget);
+    const res = await addArticle(formData);
+    
+    if (res.error) setMessage(res.error);
+    else {
+      setMessage("Success: Article added!");
       (e.target as HTMLFormElement).reset();
     }
     setLoading(false);
@@ -84,6 +104,49 @@ export default function AdminClientUI({ initialMusic }: { initialMusic: any[] })
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{m.type} • {m.year}</div>
                   </div>
                   <button onClick={() => deleteMusic(m.id)} className="btn btn-glass" style={{ color: '#f87171', border: 'none', padding: '0.5rem' }}>Delete</button>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* ARTICLES MANAGEMENT SECTION */}
+      <h2 className="gradient-text" style={{ marginTop: '4rem', marginBottom: '2rem' }}>Article Management</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+        {/* FORM ADD ARTICLE */}
+        <section className="glass-panel" style={{ padding: '2rem' }}>
+          <h2 style={{ marginBottom: '1.5rem' }}>Add Article</h2>
+          <form onSubmit={handleAddArticleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <input name="title" placeholder="Title (e.g. The Synthesis)" required className="admin-input" />
+            <textarea name="excerpt" placeholder="Short Excerpt..." required className="admin-input" rows={2}></textarea>
+            <textarea name="content" placeholder="Full Content (Markdown/HTML supported)" required className="admin-input" rows={5}></textarea>
+            <input name="date" placeholder="Date (e.g. March 2026)" className="admin-input" required />
+            <input name="link" placeholder="External Link (Optional Substack/Medium)" className="admin-input" />
+            
+            <button type="submit" disabled={loading} className="btn btn-primary" style={{ marginTop: '1rem' }}>
+              {loading ? "Adding..." : "Publish Article"}
+            </button>
+          </form>
+        </section>
+
+        {/* LIST ARTICLES */}
+        <section className="glass-panel" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+             <h2>Articles Library</h2>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {initialArticles.length === 0 ? (
+              <p className="text-secondary">No articles in database yet.</p>
+            ) : (
+              initialArticles.map((a: any) => (
+                <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: 'rgba(0,0,0,0.5)', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}>
+                  <div>
+                    <strong>{a.title}</strong>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{a.date}</div>
+                  </div>
+                  <button onClick={() => deleteArticle(a.id)} className="btn btn-glass" style={{ color: '#f87171', border: 'none', padding: '0.5rem' }}>Delete</button>
                 </div>
               ))
             )}

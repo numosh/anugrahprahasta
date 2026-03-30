@@ -2,6 +2,7 @@
 
 import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { initDb } from "@/lib/db";
 
 // Helper for defensive query (returns false if no DB configured)
@@ -38,12 +39,52 @@ export async function addMusic(formData: FormData) {
 }
 
 export async function deleteMusic(id: number) {
-  if (!await isDbReady()) return { error: "No DB" };
   try {
     await sql`DELETE FROM music WHERE id = ${id}`;
     revalidatePath("/admin");
     revalidatePath("/music");
-  } catch (e) {}
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete music", error);
+    return { success: false, error: "Gagal menghapus musik." };
+  }
+}
+
+export async function addArticle(formData: FormData) {
+  const cookieStore = await cookies();
+  const password = cookieStore.get("admin_session")?.value;
+  if (!password) return { success: false, error: "Unauthorized" };
+  
+  try {
+    await sql`
+      INSERT INTO articles (title, excerpt, content, date, link)
+      VALUES (
+        ${formData.get("title") as string},
+        ${formData.get("excerpt") as string},
+        ${formData.get("content") as string},
+        ${formData.get("date") as string},
+        ${formData.get("link") as string}
+      )
+    `;
+    revalidatePath("/admin");
+    revalidatePath("/writing");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to add article", error);
+    return { success: false, error: error.message || "Gagal menambahkan artikel." };
+  }
+}
+
+export async function deleteArticle(id: number) {
+  try {
+    await sql`DELETE FROM articles WHERE id = ${id}`;
+    revalidatePath("/admin");
+    revalidatePath("/writing");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete article", error);
+    return { success: false, error: "Gagal menghapus artikel." };
+  }
 }
 
 export async function setupDatabase() {

@@ -7,9 +7,8 @@ import Link from "next/link";
 interface ArticleItem {
   id: number;
   title: string;
-  description: string;
+  excerpt: string;
   date: string;
-  readTime: string;
   link: string;
 }
 
@@ -57,11 +56,10 @@ export default function WritingPage() {
             >
               <div className={styles.articleMeta}>
                 <span className={styles.date}>{item.date}</span>
-                <span className={styles.readTime}>{item.readTime}</span>
               </div>
               <div className={styles.articleContent}>
                 <h2>{item.title}</h2>
-                <p>{item.description}</p>
+                <p>{item.excerpt}</p>
                 <Link href={item.link} className={styles.readMore}>
                   Read Article &rarr;
                 </Link>
