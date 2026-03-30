@@ -1,58 +1,66 @@
 .container {
   padding: var(--space-24) 0;
-  min-height: 80vh;
+  min-height: 100vh;
   position: relative;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding-left: var(--space-6);
-  padding-right: var(--space-6);
 }
 
 .header {
-  margin-bottom: var(--space-16);
-  text-align: left;
+  margin-bottom: var(--space-24);
+  padding: 0 var(--space-8);
 }
 
 .header h1 {
-  font-size: clamp(2.5rem, 4vw, 4rem);
-  margin-bottom: var(--space-4);
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  margin-bottom: var(--space-8);
+  font-weight: 700;
 }
 
 .header p {
-  font-size: 1.2rem;
-  max-width: 600px;
+  font-size: 1.1rem;
+  max-width: 500px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  border-left: 2px solid var(--border-color);
+  padding-left: var(--space-6);
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12rem; /* Extreme spacing for editorial feel */
+  padding-bottom: var(--space-24);
 }
 
 .item {
-  display: flex;
-  flex-direction: column;
-  background: rgba(20, 20, 20, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08); /* Sangat tipis dan elegan */
-  border-radius: 8px; /* Kurva tipis elegan, tidak lebay */
-  overflow: hidden; /* Video mentok ke ujung tanpa sela */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
-  transition: border-color 0.3s ease, transform 0.3s ease;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: center;
+  gap: var(--space-12);
+  padding: 0 var(--space-8);
 }
 
-.item:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+/* Biar gak monoton, ganti posisi kiri-kanan setiap item genap */
+.item:nth-child(even) {
+  direction: rtl;
+}
+.item:nth-child(even) > * {
+  direction: ltr;
 }
 
 .mediaWrapper {
   width: 100%;
   aspect-ratio: 16/9;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Garis pisah tipis */
-  display: block;
-  background: #050505;
+  background: #000;
+  filter: grayscale(0.2);
+  transition: filter 0.5s ease, transform 0.5s ease;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+}
+
+.item:hover .mediaWrapper {
+  filter: grayscale(0);
+  transform: scale(1.02);
 }
 
 .placeholderMedia {
@@ -61,71 +69,74 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid var(--border-color);
 }
 
 .textWrapper {
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.meta {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.25rem;
-}
-
 .badge {
-  color: var(--text-primary);
-  font-size: 0.75rem;
+  font-family: var(--font-inter);
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 600;
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  background: rgba(255,255,255,0.08);
-  border-radius: 4px; /* Tag kecil modern */
+  letter-spacing: 0.25em;
+  font-weight: 800;
+  color: var(--accent-primary);
 }
 
 .year {
-  color: var(--text-muted);
-  font-size: 0.8rem;
   font-family: var(--font-inter);
+  font-size: 3rem;
+  font-weight: 800;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+  line-height: 1;
 }
 
 .item h2 {
-  font-size: 1.6rem;
-  font-weight: 500;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   margin: 0;
-  font-family: var(--font-inter); /* Sans-serif bersih menyatu dengan video */
 }
 
 .item p {
-  font-size: 0.95rem;
-  color: #a1a1aa; /* Zinc-400 */
-  line-height: 1.6;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 450px;
   margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to 2 lines for clean UI */
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .item {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  .item:nth-child(even) {
+    direction: ltr;
+  }
+  .grid {
+    gap: 8rem;
+  }
 }
 
 .loading {
   text-align: center;
-  padding: var(--space-16);
-  color: var(--text-secondary);
+  padding: var(--space-24);
   font-family: var(--font-outfit);
-  font-size: 1.2rem;
-  animation: pulse 1.5s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
 }

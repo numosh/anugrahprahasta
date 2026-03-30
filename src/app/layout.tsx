@@ -36,6 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body>
+        <div className="noise-overlay" />
         <Navbar />
         <main className="main-content fade-in">
           {children}
