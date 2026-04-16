@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Tasbeh Digital</title>
+  
+  <!-- PWA & SEO -->
+  <meta name="description" content="Tasbeh digital premium dengan jadwal shalat dan kompas kiblat, dioptimalkan untuk cover screen ponsel lipat.">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#D4AF37">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Ads Script (Placeholder - Ganti ID Ca-Pub dengan yang asli nanti) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+  <!-- Styles CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <h1 id="app-title">Tasbeh</h1>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="app-content">
+    
+    <!-- SLOT IKLAN ATAS (Kecil/Native) -->
+    <div class="ad-container ad-top">
+      <!-- <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXX"
+           data-ad-slot="XXXXXXXXX"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script> -->
+      <span class="ad-placeholder-text">Ad</span>
+    </div>
+
+    <!-- SECTION 1: TASBEH (Default) -->
+    <section id="section-tasbeh" class="view-section active">
+      <div class="tasbeh-display">
+        <!-- Circular Progress Ring (Acts acting as a massive tap button) -->
+        <button id="btn-tap" class="circular-tap-area" aria-label="Tambah Hitungan">
+          <svg class="progress-ring" viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-gold)" />
+                <stop offset="100%" stop-color="var(--accent-dark)" />
+              </linearGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="8" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="90" class="ring-bg"></circle>
+            <circle cx="100" cy="100" r="90" class="ring-progress" id="ring-progress" filter="url(#glow)"></circle>
+          </svg>
+          <div class="count-wrapper">
+            <span id="tasbeh-count">0</span>
+            <span id="tasbeh-cycle">Putaran: 0</span>
+            <span id="tasbeh-total" class="total-count-text">Total: 0</span>
+          </div>
+          <div class="ripple-container" id="ripple-container"></div>
+        </button>
+      </div>
+
+      <div class="tasbeh-controls">
+        <button id="btn-reset" class="btn-icon" aria-label="Reset Tasbeh">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 2: QIBLA -->
+    <section id="section-qibla" class="view-section">
+      <div class="qibla-container">
+        <div class="compass-wrapper">
+          <div class="compass-ring"></div>
+          <div class="compass-needle" id="compass-needle">
+             <div class="needle-tip"></div>
+          </div>
+        </div>
+        <p id="qibla-status" class="status-text">Mencari lokasi...</p>
+        <button id="btn-calibrate" class="btn-primary">Kalibrasi Kompas</button>
+      </div>
+    </section>
+
+    <!-- SECTION 3: JADWAL SHALAT -->
+    <section id="section-jadwal" class="view-section">
+      <div class="jadwal-container">
+        <h2 id="location-name" class="location-title">Lokasi Anda</h2>
+        <p id="hijri-date" class="date-text">...</p>
+        
+        <!-- COUNTDOWN -->
+        <div class="next-prayer-card">
+          <div class="next-prayer-label">Menuju Shalat</div>
+          <div id="next-prayer-name" class="next-prayer-name">--</div>
+          <div id="countdown-timer" class="countdown-timer">--:--:--</div>
+        </div>
+
+        <ul id="prayer-list" class="prayer-times-list">
+          <!-- Item diisi oleh JS -->
+          <li class="prayer-item">Subuh <span>-:-</span></li>
+          <li class="prayer-item">Dzuhur <span>-:-</span></li>
+          <li class="prayer-item">Ashar <span>-:-</span></li>
+          <li class="prayer-item">Maghrib <span>-:-</span></li>
+          <li class="prayer-item">Isya <span>-:-</span></li>
+        </ul>
+
+        <!-- WIRID SECTION -->
+        <div class="wirid-section">
+          <h3 class="wirid-header">Urutan Wirid Ba'da Shalat</h3>
+          <div class="doa-list">
+            <div class="doa-card">
+              <div class="doa-title">1. Istighfar (3x)</div>
+              <div class="doa-arabic">أَسْتَغْفِرُ اللهَ الْعَظِـيمِ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ</div>
+              <div class="doa-latin">Astaghfirullahal 'azhiim, alladzii laa ilaaha illa huwal hayyul qayyuum wa atuubu ilaih.</div>
+              <div class="doa-translate">"Aku memohon ampun kepada Allah Yang Maha Agung, tiada Tuhan selain Dia Yang Maha Hidup lagi Maha Berdiri Sendiri, dan aku bertaubat kepada-Nya."</div>
+            </div>
+            
+            <div class="doa-card">
+              <div class="doa-title">2. Doa Keselamatan</div>
+              <div class="doa-arabic">اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ</div>
+              <div class="doa-latin">Allahumma antas-salaam wa minkas-salaam tabaarakta yaa dzal-jalaali wal-ikraam.</div>
+              <div class="doa-translate">"Ya Allah, Engkau adalah Dzat yang memberi keselamatan, dan dari-Mu-lah segala keselamatan. Maha Pemberi Berkah Engkau, wahai Dzat Yang Maha Agung dan Maha Mulia."</div>
+            </div>
+
+            <div class="doa-card">
+              <div class="doa-title">3. Dzikir Utama (33x)</div>
+              <div class="doa-arabic">سُبْحَانَ اللهِ<br>الْحَمْدُ لِلَّهِ<br>اللهُ أَكْبَرُ</div>
+              <div class="doa-latin">Subhanallah (Maha Suci Allah)<br>Alhamdulillah (Segala Puji Bagi Allah)<br>Allahu Akbar (Allah Maha Besar)</div>
+              <div class="doa-translate">"Masing-masing dibaca 33x. Gunakan menu Tasbeh di kiri bawah untuk menghitungnya dengan mudah."</div>
+            </div>
+            
+            <div class="doa-card">
+              <div class="doa-title">4. Tahlil Penyempurna</div>
+              <div class="doa-arabic">لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ</div>
+              <div class="doa-latin">Laa ilaaha illallahu wahdahu laa syariikalah, lahul mulku wa lahul hamdu wa huwa 'alaa kulli syai'in qadiir.</div>
+              <div class="doa-translate">"Tiada Tuhan selain Allah yang Maha Esa, tiada sekutu bagi-Nya. Bagi-Nya kerajaan dan puji-pujian. Dan Dia Maha Kuasa atas segala sesuatu."</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: DOA PILIHAN -->
+    <section id="section-doa" class="view-section">
+      <div class="doa-container">
+        <h2 class="location-title">Do'a & Surah</h2>
+        
+        <div class="doa-subtabs">
+          <button class="subtab-btn active" data-doatype="doa">Do'a Pilihan</button>
+          <button class="subtab-btn" data-doatype="surah">Surat Pendek</button>
+        </div>
+
+        <div class="doa-list" id="doa-list">
+           <!-- Diisi oleh JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- FLOATING TASBEH (Visible on non-tasbeh pages) -->
+    <div id="floating-tasbeh" class="floating-tasbeh hidden">
+      <span id="floating-count">0</span>
+      <div id="floating-cycle" class="floating-badge">0</div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-target="tasbeh">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      <span>Tasbeh</span>
+    </button>
+    <button class="nav-item" data-target="qibla">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      <span>Kiblat</span>
+    </button>
+    <button class="nav-item" data-target="jadwal">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Shalat</span>
+    </button>
+    <button class="nav-item" data-target="doa">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+      </svg>
+      <span>Do'a</span>
+    </button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
