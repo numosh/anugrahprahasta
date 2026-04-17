@@ -1,9 +1,9 @@
-const CACHE_NAME = 'fivetimes-cache-v12';
+const CACHE_NAME = 'fivetimes-cache-v13';
 const STATIC_ASSETS = [
   '/tasbeh',
   '/tasbeh/index.html',
-  '/tasbeh/style.css?v=3.1',
-  '/tasbeh/app.js?v=3.1',
+  '/tasbeh/style.css?v=3.2',
+  '/tasbeh/app.js?v=3.2',
   '/tasbeh/icon.svg',
   '/tasbeh/icon-192.png',
   '/tasbeh/icon-512.png',

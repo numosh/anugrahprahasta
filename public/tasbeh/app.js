@@ -270,14 +270,25 @@ function updateTasbehUI() {
   if (ring) ring.style.strokeDashoffset = CIRCUMFERENCE - (displayNum / MAX_COUNT) * CIRCUMFERENCE;
 }
 
-document.getElementById('btn-tap')?.addEventListener('click', () => {
+function handleTasbehTap() {
   currentCount++;
   localStorage.setItem('tasbehCount', currentCount);
   updateTasbehUI();
-  if (navigator.vibrate) navigator.vibrate(currentCount % 33 === 0 ? [100,50,100] : 25);
-});
+  if (navigator.vibrate) {
+    // Vibrate stronger on 33, 66, 99, 100 etc resets if applicable
+    navigator.vibrate(currentCount % 33 === 0 ? [100,50,100] : 25);
+  }
+}
+
+document.getElementById('btn-tap')?.addEventListener('click', handleTasbehTap);
+document.getElementById('floating-tasbeh')?.addEventListener('click', handleTasbehTap);
+
 document.getElementById('btn-reset')?.addEventListener('click', () => {
-  if (confirm('Reset penghitung?')) { currentCount = 0; localStorage.setItem('tasbehCount', 0); updateTasbehUI(); }
+  if (confirm('Reset penghitung?')) {
+    currentCount = 0;
+    localStorage.setItem('tasbehCount', 0);
+    updateTasbehUI();
+  }
 });
 
 // ── KIBLAT / COMPASS ──
