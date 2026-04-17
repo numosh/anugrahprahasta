@@ -1,31 +1,29 @@
 // REGISTER SERVICE WORKER
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW error', err));
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
 
-// ----------------------------------------
-// FONT SCALING
-// ----------------------------------------
+// ── FONT SCALING ──
 function applyFontScale(scale) {
   document.documentElement.style.setProperty('--font-scale', scale);
   const el = document.getElementById('font-size-val');
   if (el) el.textContent = Math.round(scale * 100) + '%';
   localStorage.setItem('fivetimes-font-scale', scale);
 }
-const savedScale = parseFloat(localStorage.getItem('fivetimes-font-scale') || 1.1);
+const savedScale = parseFloat(localStorage.getItem('fivetimes-font-scale') || '1.1');
 applyFontScale(savedScale);
 const fontSlider = document.getElementById('font-size-slider');
-if (fontSlider) { fontSlider.value = savedScale; fontSlider.addEventListener('input', e => applyFontScale(e.target.value)); }
+if (fontSlider) {
+  fontSlider.value = savedScale;
+  fontSlider.addEventListener('input', e => applyFontScale(e.target.value));
+}
 
-// ----------------------------------------
-// NAVIGATION
-// ----------------------------------------
-const navItems = document.querySelectorAll('.nav-item');
+// ── NAVIGATION ──
+const navItems    = document.querySelectorAll('.nav-item');
 const viewSections = document.querySelectorAll('.view-section');
-const appTitle = document.getElementById('app-title');
-const TITLES = { tasbeh: 'FiveTimes', qibla: 'Arah Kiblat', jadwal: 'Waktu Shalat', doa: "Do'a & Surah", settings: 'Setelan' };
+const TITLES = { tasbeh:'FiveTimes', qibla:'Arah Kiblat', jadwal:'Waktu Shalat', doa:"Do'a & Surah", settings:'Setelan' };
 
 navItems.forEach(item => {
   item.addEventListener('click', () => {
@@ -35,14 +33,15 @@ navItems.forEach(item => {
     viewSections.forEach(s => s.classList.remove('active'));
     const sec = document.getElementById('section-' + target);
     if (sec) sec.classList.add('active');
-    if (appTitle) appTitle.textContent = TITLES[target] || 'FiveTimes';
+    const title = document.getElementById('app-title');
+    if (title) title.textContent = TITLES[target] || 'FiveTimes';
     const fab = document.getElementById('floating-tasbeh');
     if (fab) fab.classList.toggle('hidden', target === 'tasbeh');
-    if (target === 'jadwal') setTimeout(updateInfinityClock, 80);
+    if (target === 'jadwal') setTimeout(renderInfinityClock, 100);
   });
 });
 
-// Sub-tabs (Jadwal/Panduan)
+// Jadwal sub-tabs
 document.querySelectorAll('.section-tab-btn').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.section-tab-btn').forEach(t => t.classList.remove('active'));
@@ -51,11 +50,11 @@ document.querySelectorAll('.section-tab-btn').forEach(tab => {
     document.querySelectorAll('.subview').forEach(v => v.classList.remove('active'));
     const sv = document.getElementById('subview-' + target);
     if (sv) sv.classList.add('active');
-    if (target === 'jadwal-main') setTimeout(updateInfinityClock, 80);
+    if (target === 'jadwal-main') setTimeout(renderInfinityClock, 100);
   });
 });
 
-// Guide tabs (Wudhu/Shalat)
+// Guide tabs
 function initGuideTabs() {
   document.querySelectorAll('.guide-tab-btn').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -75,152 +74,215 @@ document.querySelectorAll('.subtab-btn').forEach(btn => {
   });
 });
 
-// ----------------------------------------
-// DATA: NIAT SHALAT
-// ----------------------------------------
+// ── NIAT DATA ──
 const niatData = {
-  Subuh:   { arabic: "أُصَلِّيْ فَرْضَ الصُّبْحِ رَكْعَتَيْنِ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى", latin: "Ushallii fardhash-shubhi rak'ataini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: "Saya niat shalat fardu Subuh 2 rakaat, menghadap kiblat, tunai karena Allah Ta'ala." },
-  Dzuhur:  { arabic: "أُصَلِّيْ فَرْضَ الظُّهْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى", latin: "Ushallii fardhazh-zhuhri arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: "Saya niat shalat fardu Zuhur 4 rakaat, menghadap kiblat, tunai karena Allah Ta'ala." },
-  Ashar:   { arabic: "أُصَلِّيْ فَرْضَ الْعَصْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى", latin: "Ushallii fardhal 'ashri arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: "Saya niat shalat fardu Ashar 4 rakaat, menghadap kiblat, tunai karena Allah Ta'ala." },
-  Maghrib: { arabic: "أُصَلِّيْ فَرْضَ الْمَغْرِبِ ثَلَاثَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى", latin: "Ushallii fardhal maghribi tsalaatha raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: "Saya niat shalat fardu Maghrib 3 rakaat, menghadap kiblat, tunai karena Allah Ta'ala." },
-  Isya:    { arabic: "أُصَلِّيْ فَرْضَ الْعِشَاءِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى", latin: "Ushallii fardhal 'isyaa-i arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: "Saya niat shalat fardu Isya 4 rakaat, menghadap kiblat, tunai karena Allah Ta'ala." }
+  Subuh:   { arabic: 'أُصَلِّيْ فَرْضَ الصُّبْحِ رَكْعَتَيْنِ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhash-shubhi rak'ataini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Subuh 2 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
+  Dzuhur:  { arabic: 'أُصَلِّيْ فَرْضَ الظُّهْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhazh-zhuhri arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Zuhur 4 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
+  Ashar:   { arabic: 'أُصَلِّيْ فَرْضَ الْعَصْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhal 'ashri arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Ashar 4 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
+  Maghrib: { arabic: 'أُصَلِّيْ فَرْضَ الْمَغْرِبِ ثَلَاثَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhal maghribi tsalaatha raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Maghrib 3 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
+  Isya:    { arabic: 'أُصَلِّيْ فَرْضَ الْعِشَاءِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhal 'isyaa-i arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Isya 4 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' }
 };
 
-// ----------------------------------------
-// DATA: DOA PILIHAN (no wudhu here)
-// ----------------------------------------
+// ── DOA DATA ──
 const doaData = [
-  { title: "Doa Sapu Jagat", arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", latin: "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adzaban-nar.", translate: "Ya Tuhan kami, berikanlah kami kebaikan di dunia dan kebaikan di akhirat, serta lindungilah kami dari siksa neraka." },
-  { title: "Doa untuk Orang Tua", arabic: "رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا", latin: "Rabbighfir lii wa liwaalidayya warhamhumaa kamaa rabbayaanii shaghiiraa.", translate: "Ya Tuhanku, ampunilah aku dan kedua orang tuaku, dan kasihilah mereka sebagaimana mereka mendidikku sewaktu kecil." },
-  { title: "Doa Lapangkan Dada", arabic: "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي", latin: "Rabbisyrahli shadrii wa yassirli amrii wahlul 'uqdatam-mil-lisaanii.", translate: "Ya Tuhanku, lapangkanlah dadaku, mudahkanlah urusanku, dan lepaskanlah kekakuan dari lidahku." },
-  { title: "Doa Keluar Rumah", arabic: "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ", latin: "Bismillaahi tawakkaltu 'alallaahi wa laa hawla wa laa quwwata illaa billaah.", translate: "Dengan nama Allah, aku bertawakal kepada Allah, tiada daya dan kekuatan kecuali dengan Allah." },
-  { title: "Doa Masuk Masjid", arabic: "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ", latin: "Allahummaf-tahlii abwaaba rahmatik.", translate: "Ya Allah, bukakanlah bagiku pintu-pintu rahmat-Mu." },
-  { title: "Doa Setelah Makan", arabic: "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ", latin: "Alhamdulillahil-ladzii ath'amanaa wa saqaanaa wa ja'alanaa muslimiin.", translate: "Segala puji bagi Allah yang telah memberi kami makan dan minum serta menjadikan kami orang Islam." }
+  {
+    title: 'Hasbunallah wa Ni\'mal Wakeel',
+    arabic: 'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
+    latin:  "Hasbunallaahu wa ni'mal wakiil.",
+    translate: 'Cukuplah Allah menjadi Penolong kami, dan Allah adalah sebaik-baik Pelindung.'
+  },
+  {
+    title: 'Doa Kelancaran Rezeki',
+    arabic: 'اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',
+    latin:  "Allahummak-finii bihalaaliika 'an haramiika wa aghninii bifadlika 'amman siwaak.",
+    translate: 'Ya Allah, cukupkanlah aku dengan yang halal dari yang haram-Mu, dan kayakanlah aku dengan karunia-Mu dari selain-Mu.'
+  },
+  {
+    title: 'Doa Dimudahkan Urusan',
+    arabic: 'اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا',
+    latin:  "Allaahumma laa sahla illaa maa ja'altahu sahlaa, wa anta taj'alul-hazna idzaa syi'ta sahlaa.",
+    translate: 'Ya Allah, tidak ada kemudahan kecuali apa yang Engkau jadikan mudah, dan Engkau menjadikan kesedihan itu mudah jika Engkau menghendaki.'
+  },
+  {
+    title: 'Doa Sapu Jagat',
+    arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
+    latin:  "Rabbana aatinaa fid-dunya hasanatan wa fil-aakhirati hasanatan wa qinaa 'adzaaban-naar.",
+    translate: 'Ya Tuhan kami, berikanlah kami kebaikan di dunia dan kebaikan di akhirat, serta lindungilah kami dari siksa neraka.'
+  },
+  {
+    title: 'Doa untuk Kedua Orang Tua',
+    arabic: 'رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
+    latin:  'Rabbighfir lii wa liwaalidayya warhamhumaa kamaa rabbayaanii shaghiiraa.',
+    translate: 'Ya Tuhanku, ampunilah aku dan kedua orang tuaku, dan kasihilah mereka sebagaimana mereka mendidikku sewaktu kecil.'
+  },
+  {
+    title: 'Doa Lapangkan Dada',
+    arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي',
+    latin:  "Rabbisyrahli shadrii wa yassirli amrii wahlul 'uqdatam-mil-lisaanii.",
+    translate: 'Ya Tuhanku, lapangkanlah dadaku, mudahkanlah urusanku, dan lepaskanlah kekakuan dari lidahku.'
+  },
+  {
+    title: 'Doa Keluar Rumah',
+    arabic: 'بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
+    latin:  "Bismillaahi tawakkaltu 'alallaahi wa laa hawla wa laa quwwata illaa billaah.",
+    translate: 'Dengan nama Allah, aku bertawakal kepada Allah, tiada daya dan kekuatan kecuali dengan Allah.'
+  },
+  {
+    title: 'Istighfar',
+    arabic: 'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ',
+    latin:  "Astaghfirullaahal-'azhiimal-ladzii laa ilaaha illaa huwal-hayyul-qayyuum wa atuubu ilayh.",
+    translate: 'Aku memohon ampun kepada Allah Yang Maha Agung yang tiada Tuhan selain Dia, Yang Maha Hidup lagi Maha Berdiri sendiri, dan aku bertaubat kepada-Nya.'
+  }
 ];
 
-// ----------------------------------------
-// DATA: SURAT PENDEK
-// ----------------------------------------
+// ── SURAH DATA ──
 const surahData = [
-  { title: "QS. Al-Fatihah (1)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾", latin: "Bismillāhir-rahmānir-rahīm. Al-hamdu lillāhi rabbil-'ālamīn. Ar-rahmānir-rahīm. Māliki yawmid-dīn. Iyyāka na'budu wa iyyāka nasta'īn. Ihdinaṣ-ṣirāṭal-mustaqīm. Ṣirāṭalladzīna an'amta 'alayhim ghayril-maghḍūbi 'alayhim wa laḍ-ḍāllīn.", translate: "Dengan nama Allah Yang Maha Pengasih lagi Maha Penyayang. Segala puji bagi Allah, Tuhan semesta alam..." },
-  { title: "QS. Al-Ikhlas (112)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ ﴿٤﴾", latin: "Qul huwallāhu ahad. Allāhus-samad. Lam yalid wa lam yūlad. Wa lam yakul-lahū kufuwan ahad.", translate: "Katakanlah: Dialah Allah, Yang Maha Esa. Allah adalah Tuhan yang bergantung kepada-Nya segala sesuatu. Dia tidak beranak dan tidak pula diperanakkan. Dan tidak ada seorangpun yang setara dengan-Nya." },
-  { title: "QS. Al-Falaq (113)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِنْ شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾", latin: "Qul a'ūdzu birabbil-falaq. Min syarri mā khalaq. Wa min syarri ghāsiqin idzā waqab. Wa min syarrin-naffātsāti fil-'uqad. Wa min syarri hāsidin idzā hasad.", translate: "Katakanlah: Aku berlindung kepada Tuhan Yang Menguasai Subuh, dari kejahatan makhluk-Nya, dari kejahatan malam apabila telah gelap gulita, dari kejahatan wanita-wanita tukang sihir yang menghembus pada buhul-buhul, dan dari kejahatan pendengki bila ia dengki." },
-  { title: "QS. An-Nas (114)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾", latin: "Qul a'ūdzu birabbin-nās. Malikin-nās. Ilāhin-nās. Min syarril-waswāsil-khannās. Alladzī yuwaswisu fī shudūrin-nās. Minal-jinnati wan-nās.", translate: "Katakanlah: Aku berlindung kepada Tuhannya manusia, Raja manusia, Sembahan manusia, dari kejahatan bisikan setan yang bersembunyi, yang membisikkan kejahatan ke dalam dada manusia, dari golongan jin dan manusia." },
-  { title: "QS. Al-Kautsar (108)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ ﴿١﴾ فَصَلِّ لِرَبِّكَ وَانْحَرْ ﴿٢﴾ إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ ﴿٣﴾", latin: "Innā a'thaynākal-kawsar. Fasalli lirabbika wanhar. Inna syāni'aka huwal-abtar.", translate: "Sesungguhnya Kami telah memberikan kepadamu (Muhammad) nikmat yang banyak. Maka dirikanlah shalat karena Tuhanmu, dan berkurbanlah. Sesungguhnya orang-orang yang membenci kamu dialah yang terputus." },
-  { title: "QS. Al-Kafirun (109)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ يَا أَيُّهَا الْكَافِرُونَ ﴿١﴾ لَا أَعْبُدُ مَا تَعْبُدُونَ ﴿٢﴾ وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٣﴾ وَلَا أَنَا عَابِدٌ مَا عَبَدتُّمْ ﴿٤﴾ وَلَا أَنتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٥﴾ لَكُمْ دِينُكُمْ وَلِيَ دِينِ ﴿٦﴾", latin: "Qul yā ayyuhal-kāfirūn. Lā a'budu mā ta'budūn. Wa lā antum 'ābidūna mā a'bud. Wa lā ana 'ābidum mā 'abadtum. Wa lā antum 'ābidūna mā a'bud. Lakum dīnukum wa liya dīn.", translate: "Katakanlah: Hai orang-orang kafir, aku tidak akan menyembah apa yang kamu sembah... Untukmu agamamu, dan untukkulah agamaku." },
-  { title: "QS. An-Nasr (110)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ ﴿١﴾ وَرَأَيْتَ النَّاسَ يَدْخُلُونَ فِي دِينِ اللَّهِ أَفْوَاجًا ﴿٢﴾ فَسَبِّحْ بِحَمْدِ رَبِّكَ وَاسْتَغْفِرْهُ إِنَّهُ كَانَ تَوَّابًا ﴿٣﴾", latin: "Idzā jā'a nasrullāhi wal-fath. Wa ra'aytan-nāsa yadkhulūna fī dīnillāhi afwājā. Fasabbih bihamdi rabbika wastaghfirh, innahū kāna tawwābā.", translate: "Apabila telah datang pertolongan Allah dan kemenangan, dan kamu lihat manusia masuk agama Allah dengan berbondong-bondong, maka bertasbihlah dengan memuji Tuhanmu dan mohonlah ampun kepada-Nya. Sesungguhnya Dia adalah Maha Penerima taubat." },
-  { title: "QS. Al-Masad (111)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ ﴿١﴾ مَا أَغْنَىٰ عَنْهُ مَالُهُ وَمَا كَسَبَ ﴿٢﴾ سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ ﴿٣﴾ وَامْرَأَتُهُ حَمَّالَةَ الْحَطَبِ ﴿٤﴾ فِي جِيدِهَا حَبْلٌ مِنْ مَسَدٍ ﴿٥﴾", latin: "Tabbat yadā abī lahabiw wa tabb. Mā aghnā 'anhu māluhu wa mā kasab. Sayashlā nāran dzāta lahab. Wamra'atuhū hammālatale-hatab. Fī jīdihā hablum-min masad.", translate: "Binasalah kedua tangan Abu Lahab dan sesungguhnya dia akan binasa. Tidaklah bermanfaat baginya hartanya dan apa yang ia usahakan. Kelak dia akan masuk ke dalam api yang bergejolak..." },
-  { title: "QS. Al-Ma'un (107)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ أَرَأَيْتَ الَّذِي يُكَذِّبُ بِالدِّينِ ﴿١﴾ فَذَٰلِكَ الَّذِي يَدُعُّ الْيَتِيمَ ﴿٢﴾ وَلَا يَحُضُّ عَلَىٰ طَعَامِ الْمِسْكِينِ ﴿٣﴾ فَوَيْلٌ لِلْمُصَلِّينَ ﴿٤﴾ الَّذِينَ هُمْ عَنْ صَلَاتِهِمْ سَاهُونَ ﴿٥﴾ الَّذِينَ هُمْ يُرَاءُونَ ﴿٦﴾ وَيَمْنَعُونَ الْمَاعُونَ ﴿٧﴾", latin: "Ara'aytalladzī yukadzdzibu bid-dīn. Fadzālikal-ladzī yadu''ul-yatīm. Wa lā yahuddu 'alā tha'āmil-miskīn. Fawaylul-lil-mushallīn. Alladzīna hum 'an shalātihim sāhūn. Alladzīna hum yurā'ūn. Wa yamna'ūnal-mā'ūn.", translate: "Tahukah kamu orang yang mendustakan agama? Itulah orang yang menghardik anak yatim, dan tidak menganjurkan memberi makan orang miskin..." },
-  { title: "QS. Quraisy (106)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ لِإِيلَافِ قُرَيْشٍ ﴿١﴾ إِيلَافِهِمْ رِحْلَةَ الشِّتَاءِ وَالصَّيْفِ ﴿٢﴾ فَلْيَعْبُدُوا رَبَّ هَٰذَا الْبَيْتِ ﴿٣﴾ الَّذِي أَطْعَمَهُم مِّن جُوعٍ وَآمَنَهُم مِّنْ خَوْفٍ ﴿٤﴾", latin: "Li'īlāfi quraisy. Īlāfihim rihlatas-syitā'i was-sayf. Falya'budū rabba hādzal-bayt. Alladzī ath'amahum min jū'iw wa āmanahum min khawf.", translate: "Karena kebiasaan orang-orang Quraisy, (yaitu) kebiasaan mereka bepergian pada musim dingin dan musim panas. Maka hendaklah mereka menyembah Tuhan Pemilik rumah ini (Ka'bah). Yang telah memberi makanan kepada mereka untuk menghilangkan lapar dan mengamankan mereka dari ketakutan." },
-  { title: "QS. Al-Fil (105)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ ﴿١﴾ أَلَمْ يَجْعَلْ كَيْدَهُمْ فِي تَضْلِيلٍ ﴿٢﴾ وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ ﴿٣﴾ تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ ﴿٤﴾ فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ ﴿٥﴾", latin: "Alam tara kayfa fa'ala rabbuka bi'ashābil-fīl. Alam yaj'al kaydahum fī tadhlīl. Wa arsala 'alayhim thayran abābīl. Tarmīhim bihijāratim-min sijjīl. Faja'alahum ka'ashfim-ma'kūl.", translate: "Apakah kamu tidak memperhatikan bagaimana Tuhanmu telah bertindak terhadap tentara bergajah? Bukankah Dia telah menjadikan tipu daya mereka sia-sia? Dan Dia mengirimkan kepada mereka burung yang berbondong-bondong, yang melempari mereka dengan batu dari tanah liat yang dibakar. Lalu Dia menjadikan mereka seperti daun-daun yang dimakan ulat." },
-  { title: "QS. Al-Humazah (104)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ وَيْلٌ لِكُلِّ هُمَزَةٍ لُمَزَةٍ ﴿١﴾ الَّذِي جَمَعَ مَالًا وَعَدَّدَهُ ﴿٢﴾ يَحْسَبُ أَنَّ مَالَهُ أَخْلَدَهُ ﴿٣﴾ كَلَّا لَيُنْبَذَنَّ فِي الْحُطَمَةِ ﴿٤﴾ وَمَا أَدْرَاكَ مَا الْحُطَمَةُ ﴿٥﴾ نَارُ اللَّهِ الْمُوقَدَةُ ﴿٦﴾ الَّتِي تَطَّلِعُ عَلَى الْأَفْئِدَةِ ﴿٧﴾ إِنَّهَا عَلَيْهِم مُّؤْصَدَةٌ ﴿٨﴾ فِي عَمَدٍ مُّمَدَّدَةٍ ﴿٩﴾", latin: "Waylul-likulli humazatil-lumazah. Alladzī jama'a mālaw-wa 'addadah. Yahsabu anna mālahuū akhladah. Kallā layumbadzianna fil-huthamah. Wa mā adrāka mal-huthamah. Nārullāhil-mūqadah. Allatī tattali'u 'alal-af'idah. Innahā 'alayhim mu'shadah. Fī 'amadim-mumaddadah.", translate: "Kecelakaanlah bagi setiap pengumpat lagi pencela, yang mengumpulkan harta dan menghitung-hitungnya, dia mengira bahwa hartanya itu dapat mengekalkannya. Sekali-kali tidak! Sesungguhnya dia benar-benar akan dilemparkan ke dalam Huthamah..." },
-  { title: "QS. Al-'Asr (103)", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ وَالْعَصْرِ ﴿١﴾ إِنَّ الْإِنْسَانَ لَفِي خُسْرٍ ﴿٢﴾ إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ ﴿٣﴾", latin: "Wal-'ashr. Innal-insāna lafī khusr. Illalladzīna āmanū wa 'amilush-shālihāti wa tawāshaw bil-haqqi wa tawāshaw bis-shabr.", translate: "Demi masa. Sungguh, manusia berada dalam kerugian, kecuali orang-orang yang beriman dan mengerjakan kebajikan serta saling menasihati untuk kebenaran dan saling menasihati untuk kesabaran." }
+  {
+    title: 'QS. Al-Fatihah (1)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾',
+    latin: 'Bismillaahir-rahmaanir-rahiim. Al-hamdu lillaahi rabbil-\'aalamiinn. Ar-rahmaanir-rahiim. Maaliki yawmid-diin. Iyyaaka na\'budu wa iyyaaka nasta\'iin. Ihdinash-shiraathal-mustaqiim. Shiraathalladziina an\'amta \'alayhim ghayril-maghdhuubi \'alayhim wa ladh-dhaalliin.',
+    translate: 'Dengan nama Allah Yang Maha Pengasih, Maha Penyayang. Segala puji bagi Allah, Tuhan seluruh alam, Yang Maha Pengasih, Maha Penyayang, Pemilik hari pembalasan. Hanya kepada Engkaulah kami menyembah dan hanya kepada Engkaulah kami mohon pertolongan. Tunjukilah kami jalan yang lurus...'
+  },
+  {
+    title: 'QS. Al-Ikhlas (112)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ ﴿٤﴾',
+    latin: "Qul huwallaaahu ahad. Allaaahush-shamad. Lam yalid wa lam yuulad. Wa lam yakul-lahuu kufuwan ahad.",
+    translate: 'Katakanlah: Dialah Allah, Yang Maha Esa. Allah tempat meminta segala sesuatu. Dia tidak beranak dan tidak pula diperanakkan. Dan tidak ada sesuatu pun yang setara dengan Dia.'
+  },
+  {
+    title: 'QS. Al-Falaq (113)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِنْ شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾',
+    latin: "Qul a'uudzu birabbil-falaq. Min shar-ri maa khalaq. Wa min shar-ri ghaasiqin idzaa waqab. Wa min shar-rin-naffaatsaati fil-'uqad. Wa min shar-ri haasidin idzaa hasad.",
+    translate: 'Katakanlah: Aku berlindung kepada Tuhan yang menguasai subuh, dari kejahatan makhluk-Nya, dari kejahatan malam apabila telah gelap gulita, dari kejahatan perempuan-perempuan tukang sihir yang meniup pada buhul-buhul, dan dari kejahatan orang yang dengki apabila ia dengki.'
+  },
+  {
+    title: 'QS. An-Nas (114)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾',
+    latin: "Qul a'uudzu birabbin-naas. Malikin-naas. Ilaahin-naas. Min shar-ril-waswaasil-khannaas. Alladzii yuwaswisu fii shuduurin-naas. Minal-jinnati wan-naas.",
+    translate: 'Katakanlah: Aku berlindung kepada Tuhannya manusia, Raja manusia, Sembahan manusia, dari kejahatan bisikan setan yang tersembunyi, yang membisikkan kejahatan ke dalam dada manusia, dari golongan jin dan manusia.'
+  },
+  {
+    title: 'QS. Al-Kautsar (108)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ ﴿١﴾ فَصَلِّ لِرَبِّكَ وَانْحَرْ ﴿٢﴾ إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ ﴿٣﴾',
+    latin: "Innaa a'thaynaak al-kawthar. Fasalli lirabbika wanhar. Inna syaani'aka huwal-abtar.",
+    translate: 'Sungguh, Kami telah memberimu (Muhammad) nikmat yang banyak. Maka laksanakanlah shalat karena Tuhanmu, dan berkurbanlah. Sungguh, orang-orang yang membencimu dialah yang terputus (dari rahmat Allah).'
+  },
+  {
+    title: 'QS. Al-Kafirun (109)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ يَا أَيُّهَا الْكَافِرُونَ ﴿١﴾ لَا أَعْبُدُ مَا تَعْبُدُونَ ﴿٢﴾ وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٣﴾ وَلَا أَنَا عَابِدٌ مَّا عَبَدتُّمْ ﴿٤﴾ وَلَا أَنتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٥﴾ لَكُمْ دِينُكُمْ وَلِيَ دِينِ ﴿٦﴾',
+    latin: "Qul yaa ayyuhal-kaafiruum. Laa a'budu maa ta'buduun. Wa laa antum 'aabiduuna maa a'bud. Wa laa anaa 'aabidum maa 'abadttum. Wa laa antum 'aabiduuna maa a'bud. Lakum diinukum wa liya diin.",
+    translate: 'Katakanlah: Wahai orang-orang kafir! Aku tidak akan menyembah apa yang kamu sembah, dan kamu bukan penyembah apa yang aku sembah, dan aku tidak pernah menjadi penyembah apa yang kamu sembah, dan kamu tidak pernah menjadi penyembah apa yang aku sembah. Untukmu agamamu, dan untukku agamaku.'
+  },
+  {
+    title: 'QS. An-Nasr (110)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ ﴿١﴾ وَرَأَيْتَ النَّاسَ يَدْخُلُونَ فِي دِينِ اللَّهِ أَفْوَاجًا ﴿٢﴾ فَسَبِّحْ بِحَمْدِ رَبِّكَ وَاسْتَغْفِرْهُ إِنَّهُ كَانَ تَوَّابًا ﴿٣﴾',
+    latin: "Idzaa jaaa'a nashrullaahi wal-fath. Wa ra'aytan-naasa yadkhuluuna fii diinillaahi afwaajaa. Fasabbih bihamdi rabbika wastaghfirh, innahuu kaana tawwaabaa.",
+    translate: 'Apabila telah datang pertolongan Allah dan kemenangan, dan engkau melihat manusia berbondong-bondong masuk agama Allah, maka bertasbihlah dengan memuji Tuhanmu dan mohonlah ampunan kepada-Nya. Sungguh, Dia Maha Penerima tobat.'
+  },
+  {
+    title: 'QS. Al-\'Asr (103)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ وَالْعَصْرِ ﴿١﴾ إِنَّ الْإِنْسَانَ لَفِي خُسْرٍ ﴿٢﴾ إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ ﴿٣﴾',
+    latin: "Wal-'ashr. Innal-insaana lafii khusr. Illalladziina aamanuu wa 'amilush-shaalihaati wa tawaashaw bil-haqqi wa tawaashaw bish-shabr.",
+    translate: 'Demi masa. Sungguh, manusia berada dalam kerugian, kecuali orang-orang yang beriman dan mengerjakan kebajikan serta saling menasihati untuk kebenaran dan saling menasihati untuk kesabaran.'
+  },
+  {
+    title: 'QS. Al-Ma\'un (107)',
+    arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ أَرَأَيْتَ الَّذِي يُكَذِّبُ بِالدِّينِ ﴿١﴾ فَذَٰلِكَ الَّذِي يَدُعُّ الْيَتِيمَ ﴿٢﴾ وَلَا يَحُضُّ عَلَىٰ طَعَامِ الْمِسْكِينِ ﴿٣﴾ فَوَيْلٌ لِلْمُصَلِّينَ ﴿٤﴾ الَّذِينَ هُمْ عَنْ صَلَاتِهِمْ سَاهُونَ ﴿٥﴾ الَّذِينَ هُمْ يُرَاءُونَ ﴿٦﴾ وَيَمْنَعُونَ الْمَاعُونَ ﴿٧﴾',
+    latin: "Ara'aytalladhii yukadhdhibu bid-diin. Fadzaalikal-ladhii yadu''ul-yatiim. Wa laa yahuddu 'alaa tha'aamil-miskiin. Fawaylul-lil-mushalliim. Alladziina hum 'an shaalaatihim saahuum. Alladziina hum yuraa'uun. Wa yamna'uunal-maa'uun.",
+    translate: 'Tahukah kamu orang yang mendustakan agama? Itulah orang yang menghardik anak yatim, dan tidak mendorong memberi makan orang miskin. Maka celakalah orang yang shalat, yang lalai dari shalatnya, yang berbuat riya, dan enggan memberikan bantuan.'
+  }
 ];
 
-// ----------------------------------------
-// RENDER DOA LIST
-// ----------------------------------------
+// ── RENDER DOA/SURAH LIST ──
 function renderDoaList() {
   const container = document.getElementById('doa-list');
   if (!container) return;
   const activeBtn = document.querySelector('.subtab-btn.active');
-  const activeType = activeBtn ? activeBtn.getAttribute('data-doatype') : 'doa';
-  const data = activeType === 'doa' ? doaData : surahData;
-  container.innerHTML = '';
-  data.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'doa-card';
-    card.innerHTML = `
+  const type = activeBtn ? activeBtn.getAttribute('data-doatype') : 'doa';
+  const data = type === 'doa' ? doaData : surahData;
+  container.innerHTML = data.map(item => `
+    <div class="doa-card">
       <div class="doa-title">${item.title}</div>
       <div class="doa-arabic">${item.arabic}</div>
       <div class="doa-latin">${item.latin}</div>
       <div class="doa-translate">${item.translate}</div>
-    `;
-    container.appendChild(card);
-  });
+    </div>
+  `).join('');
 }
 
-// ----------------------------------------
-// TASBEH
-// ----------------------------------------
+// ── TASBEH ──
 let currentCount = parseInt(localStorage.getItem('tasbehCount') || '0');
-const MAX_COUNT = 33;
+const MAX_COUNT   = 33;
 const CIRCUMFERENCE = 565.48;
 
 function updateTasbehUI() {
-  let displayNum = currentCount % MAX_COUNT || (currentCount > 0 ? MAX_COUNT : 0);
-  let cycle = Math.floor(currentCount / MAX_COUNT);
-  if (currentCount > 0 && currentCount % MAX_COUNT === 0) { displayNum = MAX_COUNT; cycle = Math.floor(currentCount / MAX_COUNT) - 1; }
-  const el = n => document.getElementById(n);
-  if (el('tasbeh-count')) el('tasbeh-count').textContent = displayNum;
-  if (el('floating-count')) el('floating-count').textContent = displayNum;
-  if (el('tasbeh-cycle')) el('tasbeh-cycle').textContent = `Putaran: ${cycle}`;
-  if (el('floating-cycle')) el('floating-cycle').textContent = cycle;
-  if (el('tasbeh-total')) el('tasbeh-total').textContent = `Total: ${currentCount}`;
-  const ring = el('ring-progress');
+  const raw = currentCount % MAX_COUNT;
+  const displayNum = (currentCount > 0 && raw === 0) ? MAX_COUNT : raw;
+  const cycle = Math.floor(currentCount / MAX_COUNT) - (currentCount > 0 && raw === 0 ? 1 : 0);
+  const $ = id => document.getElementById(id);
+  if ($('tasbeh-count'))   $('tasbeh-count').textContent   = displayNum;
+  if ($('floating-count')) $('floating-count').textContent = displayNum;
+  if ($('tasbeh-cycle'))   $('tasbeh-cycle').textContent   = `Putaran: ${cycle}`;
+  if ($('floating-cycle')) $('floating-cycle').textContent = cycle;
+  if ($('tasbeh-total'))   $('tasbeh-total').textContent   = `Total: ${currentCount}`;
+  const ring = $('ring-progress');
   if (ring) ring.style.strokeDashoffset = CIRCUMFERENCE - (displayNum / MAX_COUNT) * CIRCUMFERENCE;
 }
 
-const btnTap = document.getElementById('btn-tap');
-const btnReset = document.getElementById('btn-reset');
-if (btnTap) btnTap.addEventListener('click', () => {
+document.getElementById('btn-tap')?.addEventListener('click', () => {
   currentCount++;
   localStorage.setItem('tasbehCount', currentCount);
   updateTasbehUI();
-  if (navigator.vibrate) navigator.vibrate(currentCount % 33 === 0 ? [100, 50, 100] : 30);
+  if (navigator.vibrate) navigator.vibrate(currentCount % 33 === 0 ? [100,50,100] : 25);
 });
-if (btnReset) btnReset.addEventListener('click', () => {
+document.getElementById('btn-reset')?.addEventListener('click', () => {
   if (confirm('Reset penghitung?')) { currentCount = 0; localStorage.setItem('tasbehCount', 0); updateTasbehUI(); }
 });
 
-// ----------------------------------------
-// INFINITY CLOCK
-// ----------------------------------------
-const infinityPath = document.querySelector('.infinity-path-bg');
-let prayerTimesData = null;
+// ── KIBLAT / COMPASS ──
+let qiblaAzimuth = null;
+const compassNeedle = document.getElementById('compass-needle');
 
-function updateInfinityClock() {
-  if (!infinityPath || !infinityPath.isConnected) return;
-  try {
-    const totalLength = infinityPath.getTotalLength();
-    if (!totalLength) return;
-    const now = new Date();
-    const t = (now.getHours() + now.getMinutes() / 60) / 24;
-    const pt = infinityPath.getPointAtLength(t * totalLength);
-    const ti = document.getElementById('time-indicator');
-    if (ti) { ti.setAttribute('cx', pt.x); ti.setAttribute('cy', pt.y); }
-    const ip = document.getElementById('infinity-progress');
-    if (ip) { ip.style.strokeDasharray = totalLength; ip.style.strokeDashoffset = totalLength - (t * totalLength); }
-    const ng = document.getElementById('prayer-nodes');
-    if (ng && prayerTimesData) {
-      ng.innerHTML = '';
-      Object.values(prayerTimesData).forEach(time => {
-        const [h, m] = time.split(':').map(Number);
-        const p = infinityPath.getPointAtLength(((h + m / 60) / 24) * totalLength);
-        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', '3.5');
-        c.classList.add('prayer-node');
-        ng.appendChild(c);
-      });
-    }
-  } catch (e) {}
+function calcQiblaAzimuth(lat, lng) {
+  const phiK = 21.4225 * Math.PI / 180;
+  const lambdaK = 39.8262 * Math.PI / 180;
+  const phi = lat * Math.PI / 180;
+  const lambda = lng * Math.PI / 180;
+  const y = Math.sin(lambdaK - lambda);
+  const x = Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(lambdaK - lambda);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
 }
 
-// ----------------------------------------
-// PRAYER TIMES & COUNTDOWN
-// ----------------------------------------
+window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+window.addEventListener('deviceorientation', handleOrientation, true);
+
+function handleOrientation(e) {
+  if (qiblaAzimuth === null || !compassNeedle) return;
+  let compass = e.webkitCompassHeading;
+  if (compass === undefined || compass === null) compass = (360 - e.alpha) % 360;
+  const angle = (qiblaAzimuth - compass + 360) % 360;
+  compassNeedle.style.transform = `rotate(${angle}deg)`;
+}
+
+// ── PRAYER TIMES ──
+let prayerTimesData = null;
+
+const prayerOrder = ['Subuh','Dzuhur','Ashar','Maghrib','Isya'];
+
 function fetchPrayerTimes(lat, lng) {
   fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now()/1000)}?latitude=${lat}&longitude=${lng}&method=20`)
     .then(r => r.json()).then(data => {
       const t = data.data.timings;
       prayerTimesData = { Subuh: t.Fajr, Dzuhur: t.Dhuhr, Ashar: t.Asr, Maghrib: t.Maghrib, Isya: t.Isha };
-      const ln = document.getElementById('location-name');
-      if (ln) ln.textContent = `${lat.toFixed(2)}°, ${lng.toFixed(2)}°`;
-      const hd = document.getElementById('hijri-date');
-      if (hd) { const h = data.data.date.hijri; hd.textContent = `${h.day} ${h.month.en} ${h.year} H`; }
+      const $ = id => document.getElementById(id);
+      if ($('location-name')) $('location-name').textContent = `${lat.toFixed(2)}°, ${lng.toFixed(2)}°`;
+      if ($('hijri-date')) {
+        const h = data.data.date.hijri;
+        $('hijri-date').textContent = `${h.day} ${h.month.en} ${h.year} H`;
+      }
       renderPrayerList();
       startCountdown();
-      setTimeout(updateInfinityClock, 200);
+      setTimeout(renderInfinityClock, 200);
     }).catch(() => {});
 }
 
@@ -240,36 +302,167 @@ function startCountdown() {
     const now = new Date();
     const curM = now.getHours() * 60 + now.getMinutes();
     let next = null;
-    for (const [name, time] of Object.entries(prayerTimesData)) {
-      const [h, m] = time.split(':').map(Number);
-      if (h * 60 + m > curM) { next = { name, totalMins: h * 60 + m }; break; }
+    for (const name of prayerOrder) {
+      const [h, m] = prayerTimesData[name].split(':').map(Number);
+      if (h * 60 + m > curM) { next = { name, totalM: h * 60 + m }; break; }
     }
-    if (!next) next = { name: 'Subuh', totalMins: 0 };
-    const el = n => document.getElementById(n);
-    if (el('next-prayer-name')) el('next-prayer-name').textContent = next.name;
-    const diffMs = (next.totalMins - curM) * 60000 - now.getSeconds() * 1000;
-    const hh = Math.floor(diffMs / 3600000), mm = Math.floor((diffMs % 3600000) / 60000), ss = Math.floor((diffMs % 60000) / 1000);
-    if (el('countdown-timer')) el('countdown-timer').textContent = [hh, mm, ss].map(x => String(x).padStart(2, '0')).join(':');
+    if (!next) { next = { name: 'Subuh', totalM: 24 * 60 }; }
+    const $ = id => document.getElementById(id);
+    if ($('next-prayer-name')) $('next-prayer-name').textContent = next.name;
+    const diff = (next.totalM - curM) * 60000 - now.getSeconds() * 1000;
+    const hh = Math.floor(diff/3600000), mm = Math.floor((diff%3600000)/60000), ss = Math.floor((diff%60000)/1000);
+    if ($('countdown-timer')) $('countdown-timer').textContent = [hh,mm,ss].map(v=>String(v).padStart(2,'0')).join(':');
     const nd = niatData[next.name];
     if (nd) {
-      if (el('niat-arabic')) el('niat-arabic').textContent = nd.arabic;
-      if (el('niat-latin')) el('niat-latin').textContent = nd.latin;
-      if (el('niat-translate')) el('niat-translate').textContent = nd.translate;
-      if (el('contextual-niat')) el('contextual-niat').classList.remove('hidden');
+      if ($('niat-arabic'))    $('niat-arabic').textContent    = nd.arabic;
+      if ($('niat-latin'))     $('niat-latin').textContent     = nd.latin;
+      if ($('niat-translate')) $('niat-translate').textContent = nd.translate;
+      if ($('contextual-niat')) $('contextual-niat').classList.remove('hidden');
     }
   }, 1000);
 }
 
+// ── INFINITY CLOCK ──
+function renderInfinityClock() {
+  const svg  = document.querySelector('.infinity-svg');
+  const path = document.querySelector('.infinity-path-bg');
+  if (!svg || !path || path.offsetParent === null) return;
+  try {
+    const totalLen = path.getTotalLength();
+    if (!totalLen) return;
+
+    // Remove previous dynamic elements
+    svg.querySelectorAll('.dyn').forEach(el => el.remove());
+
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+
+    // Build prayer minutes array
+    const prayers = prayerTimesData ? prayerOrder.map(name => {
+      const [h, m] = prayerTimesData[name].split(':').map(Number);
+      return { name, mins: h * 60 + m, label: name.substring(0, 3) };
+    }) : [];
+
+    // Find current period
+    let currentIdx = -1;
+    for (let i = prayers.length - 1; i >= 0; i--) {
+      if (prayers[i].mins <= nowMins) { currentIdx = i; break; }
+    }
+
+    // Draw colored arc for current period
+    if (prayers.length > 0) {
+      const startIdx = currentIdx >= 0 ? currentIdx : prayers.length - 1;
+      const endIdx   = (startIdx + 1) % prayers.length;
+      const startMins = prayers[startIdx].mins;
+      const endMins   = endIdx > 0 ? prayers[endIdx].mins : prayers[0].mins + 1440;
+
+      // Active period arc (gold)
+      const tStart = (startMins / (24 * 60)) * totalLen;
+      const tEnd   = (Math.min(nowMins, endMins > 1440 ? endMins - 1440 : endMins) / (24 * 60)) * totalLen;
+      const arcActive = document.createElementNS('http://www.w3.org/2000/svg','path');
+      arcActive.setAttribute('d', getSubpath(path, tStart, tEnd, totalLen));
+      arcActive.setAttribute('fill', 'none');
+      arcActive.setAttribute('stroke', '#D4AF37');
+      arcActive.setAttribute('stroke-width', '6');
+      arcActive.setAttribute('stroke-linecap', 'round');
+      arcActive.setAttribute('filter', 'url(#glow)');
+      arcActive.classList.add('dyn');
+      svg.appendChild(arcActive);
+
+      // Remaining arc (dim)
+      const tNow  = (nowMins / (24 * 60)) * totalLen;
+      const tNext = (Math.min(endMins, 1440) / (24 * 60)) * totalLen;
+      const arcNext = document.createElementNS('http://www.w3.org/2000/svg','path');
+      arcNext.setAttribute('d', getSubpath(path, tNow, tNext, totalLen));
+      arcNext.setAttribute('fill', 'none');
+      arcNext.setAttribute('stroke', 'rgba(212,175,55,0.25)');
+      arcNext.setAttribute('stroke-width', '4');
+      arcNext.setAttribute('stroke-linecap', 'round');
+      arcNext.classList.add('dyn');
+      svg.appendChild(arcNext);
+    }
+
+    // Prayer nodes with labels
+    prayers.forEach(({ name, mins, label }) => {
+      const tPrayer = (mins / (24*60)) * totalLen;
+      const pt = path.getPointAtLength(tPrayer);
+      const isActive = (currentIdx >= 0 && prayers[currentIdx].name === name);
+      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx', pt.x); circle.setAttribute('cy', pt.y);
+      circle.setAttribute('r', isActive ? '5' : '3.5');
+      circle.setAttribute('fill', isActive ? '#D4AF37' : '#030609');
+      circle.setAttribute('stroke', '#D4AF37');
+      circle.setAttribute('stroke-width', isActive ? '0' : '2');
+      circle.classList.add('dyn');
+      svg.appendChild(circle);
+
+      // Label offset: push label away from path center
+      const cx = 100, cy = 50; // SVG viewBox center
+      const dx = pt.x - cx, dy = pt.y - cy;
+      const dist = Math.sqrt(dx*dx+dy*dy) || 1;
+      const offset = 11;
+      const lx = pt.x + (dx/dist) * offset;
+      const ly = pt.y + (dy/dist) * offset + 2;
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+      text.setAttribute('x', lx); text.setAttribute('y', ly);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('fill', isActive ? '#D4AF37' : 'rgba(212,175,55,0.6)');
+      text.setAttribute('font-size', isActive ? '6.5' : '5.5');
+      text.setAttribute('font-weight', isActive ? 'bold' : 'normal');
+      text.setAttribute('font-family', 'Inter, sans-serif');
+      text.textContent = label;
+      text.classList.add('dyn');
+      svg.appendChild(text);
+    });
+
+    // Current time indicator dot
+    const tNow = (nowMins / (24*60)) * totalLen;
+    const nowPt = path.getPointAtLength(tNow);
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', nowPt.x); dot.setAttribute('cy', nowPt.y);
+    dot.setAttribute('r', '4.5');
+    dot.setAttribute('fill', '#ffffff');
+    dot.setAttribute('stroke', '#D4AF37');
+    dot.setAttribute('stroke-width', '2');
+    dot.setAttribute('filter', 'url(#glow)');
+    dot.classList.add('dyn');
+    svg.appendChild(dot);
+
+  } catch(e) { console.warn('InfinityClock error:', e); }
+}
+
+// Helper: approximate a sub-path between two lengths using polyline points
+function getSubpath(path, tStart, tEnd, totalLen) {
+  const steps = 30;
+  const dt = (tEnd - tStart) / steps;
+  if (dt <= 0) return 'M 0 0';
+  const points = [];
+  for (let i = 0; i <= steps; i++) {
+    const p = path.getPointAtLength(Math.min(tStart + i * dt, totalLen));
+    points.push(`${i === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
+  }
+  return points.join(' ');
+}
+
+// ── INIT QIBLA ──
 function initQibla() {
   if (!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(pos => {
-    fetchPrayerTimes(pos.coords.latitude, pos.coords.longitude);
+    const { latitude: lat, longitude: lng } = pos.coords;
+    qiblaAzimuth = calcQiblaAzimuth(lat, lng);
+    const status = document.getElementById('qibla-status');
+    if (status) status.textContent = `GPS aktif — Kiblat: ${Math.round(qiblaAzimuth)}° dari Utara`;
+    const deg = document.querySelector('.qibla-degree');
+    if (deg) deg.textContent = `${Math.round(qiblaAzimuth)}°`;
+    fetchPrayerTimes(lat, lng);
+  }, () => {
+    const status = document.getElementById('qibla-status');
+    if (status) status.textContent = 'Izinkan akses lokasi untuk kiblat & jadwal shalat.';
   });
 }
 
-// ----------------------------------------
-// GUIDE CONTENT
-// ----------------------------------------
+// ── GUIDE CONTENT ──
 function renderGuideContent(type) {
   const content = document.getElementById('guide-content');
   if (!content) return;
@@ -284,56 +477,57 @@ function renderGuideContent(type) {
       <div class="doa-card">
         <div class="doa-title">Urutan Berwudhu</div>
         <ol class="guide-list">
-          <li>Niat dalam hati</li><li>Basuh kedua telapak tangan 3×</li><li>Berkumur 3×</li>
-          <li>Bersihkan hidung 3×</li><li>Basuh wajah 3×</li><li>Basuh tangan s/d siku kanan 3×, lalu kiri 3×</li>
-          <li>Usap sebagian kepala 1×</li><li>Usap kedua telinga 1×</li><li>Basuh kaki kanan s/d mata kaki 3×, lalu kiri 3×</li>
+          <li>Niat dalam hati</li><li>Basuh kedua telapak tangan 3×</li>
+          <li>Berkumur 3×</li><li>Bersihkan hidung 3×</li><li>Basuh wajah 3×</li>
+          <li>Basuh tangan hingga siku (kanan dulu) 3×</li>
+          <li>Usap sebagian kepala 1×</li><li>Usap kedua telinga 1×</li>
+          <li>Basuh kaki hingga mata kaki (kanan dulu) 3×</li>
         </ol>
       </div>
       <div class="doa-card">
         <div class="doa-title">Doa Sesudah Wudhu</div>
         <div class="doa-arabic">أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ</div>
         <div class="doa-latin">Asyhadu allaa ilaaha illallaahu wahdahu laa syariika lahu wa asyhadu anna muhammadan 'abduhu wa rasuuluh.</div>
-        <div class="doa-translate">Aku bersaksi bahwa tidak ada Tuhan selain Allah, yang Maha Esa, tiada sekutu bagi-Nya, dan aku bersaksi bahwa Muhammad adalah hamba dan utusan-Nya.</div>
+        <div class="doa-translate">Aku bersaksi tiada Tuhan selain Allah, Yang Maha Esa, tiada sekutu bagi-Nya, dan aku bersaksi bahwa Muhammad adalah hamba dan utusan-Nya.</div>
       </div>`;
   } else {
     content.innerHTML = `
       <div class="doa-card">
-        <div class="doa-title">Rukun Shalat</div>
+        <div class="doa-title">Rukun Shalat (13)</div>
         <ol class="guide-list">
-          <li>Niat</li><li>Berdiri tegak (bagi yang mampu)</li><li>Takbiratul ihram (Allahu Akbar)</li>
-          <li>Membaca Al-Fatihah</li><li>Ruku' dengan tuma'ninah</li><li>I'tidal dengan tuma'ninah</li>
-          <li>Sujud 2× dengan tuma'ninah</li><li>Duduk di antara dua sujud</li>
-          <li>Duduk tahiyat akhir</li><li>Membaca tasyahud akhir</li><li>Membaca shalawat Nabi</li>
+          <li>Niat</li><li>Berdiri tegak (jika mampu)</li><li>Takbiratul ihram</li>
+          <li>Membaca Al-Fatihah</li><li>Ruku' dengan tuma'ninah</li>
+          <li>I'tidal dengan tuma'ninah</li><li>Sujud 2× dengan tuma'ninah</li>
+          <li>Duduk antara dua sujud</li><li>Duduk tahiyat akhir</li>
+          <li>Membaca tasyahud akhir</li><li>Membaca shalawat Nabi</li>
           <li>Salam pertama</li><li>Tertib (berurutan)</li>
         </ol>
       </div>
       <div class="doa-card">
-        <div class="doa-title">Bacaan Takbiratul Ihram</div>
-        <div class="doa-arabic">اللَّهُ أَكْبَرُ</div>
-        <div class="doa-latin">Allaahu Akbar.</div>
-        <div class="doa-translate">Allah Maha Besar.</div>
-      </div>
-      <div class="doa-card">
         <div class="doa-title">Bacaan Ruku'</div>
         <div class="doa-arabic">سُبْحَانَ رَبِّيَ الْعَظِيمِ وَبِحَمْدِهِ</div>
-        <div class="doa-latin">Subhaana rabbiyal 'adzimi wa bihamdih.</div>
-        <div class="doa-translate">Maha Suci Tuhanku Yang Maha Agung, dan dengan memuji-Nya.</div>
+        <div class="doa-latin">Subhaana rabbiyal 'azhiimi wa bihamdih.</div>
+        <div class="doa-translate">Maha Suci Tuhanku Yang Maha Agung, dan dengan memuji-Nya. (3×)</div>
       </div>
       <div class="doa-card">
         <div class="doa-title">Bacaan Sujud</div>
         <div class="doa-arabic">سُبْحَانَ رَبِّيَ الْأَعْلَى وَبِحَمْدِهِ</div>
         <div class="doa-latin">Subhaana rabbiyal a'laa wa bihamdih.</div>
-        <div class="doa-translate">Maha Suci Tuhanku Yang Maha Tinggi, dan dengan memuji-Nya.</div>
+        <div class="doa-translate">Maha Suci Tuhanku Yang Maha Tinggi, dan dengan memuji-Nya. (3×)</div>
+      </div>
+      <div class="doa-card">
+        <div class="doa-title">Tasyahud Akhir</div>
+        <div class="doa-arabic">التَّحِيَّاتُ الْمُبَارَكَاتُ الصَّلَوَاتُ الطَّيِّبَاتُ لِلَّهِ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</div>
+        <div class="doa-latin">At-tahiyyaatul mubaarakaatush-shalawaatuth-thayyibaatu lillaah. As-salaamu 'alayka ayyuhan-nabiyyu wa rahmatullaahi wa barakaatuh. As-salaamu 'alaynaa wa 'alaa 'ibaadillaahish-shaalihiin. Asyhadu allaa ilaaha illallaahu wa asyhadu anna muhammadan rasuulullaah.</div>
+        <div class="doa-translate">Bacaan tahiyat akhir untuk rakaat terakhir sebelum salam.</div>
       </div>`;
   }
 }
 
-// ----------------------------------------
-// INIT
-// ----------------------------------------
+// ── INIT ALL ──
 initQibla();
 updateTasbehUI();
 renderDoaList();
 renderGuideContent('wudhu');
 initGuideTabs();
-setInterval(updateInfinityClock, 15000);
+setInterval(renderInfinityClock, 30000);

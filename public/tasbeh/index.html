@@ -3,54 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>FiveTimes - Premium Spiritual Companion</title>
-  
-  <!-- PWA & SEO -->
-  <meta name="description" content="FiveTimes - Pendamping ibadah premium dengan jadwal shalat, kiblat, dan tasbeh digital.">
+  <title>FiveTimes - Pendamping Ibadah Digital</title>
+  <meta name="description" content="FiveTimes - Jadwal shalat, arah kiblat, tasbeh digital, dan panduan ibadah lengkap.">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#D4AF37">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
-  
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Google Ads Script (Placeholder) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-
-  <!-- Styles CSS -->
-  <link rel="stylesheet" href="style.css?v=2.0">
+  <link rel="stylesheet" href="style.css?v=2.1">
 </head>
 <body>
 
-  <!-- App Header -->
   <header class="app-header">
     <h1 id="app-title">FiveTimes</h1>
   </header>
 
-  <!-- Main Content Container -->
-  <!-- SLOT IKLAN ATAS -->
-  <div class="ad-container">
-    <span class="ad-placeholder-text">Ad</span>
-  </div>
-
   <main class="app-content">
 
-    <!-- SECTION 1: TASBEH (Default) -->
+    <!-- ═══ TASBEH ═══ -->
     <section id="section-tasbeh" class="view-section active">
-      <div class="tasbeh-display">
+      <div class="tasbeh-ring-wrapper">
         <button id="btn-tap" class="circular-tap-area" aria-label="Tambah Hitungan">
           <svg class="progress-ring" viewBox="0 0 200 200">
             <defs>
               <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="var(--accent-gold)" />
-                <stop offset="100%" stop-color="var(--accent-dark)" />
+                <stop offset="0%" stop-color="#D4AF37"/>
+                <stop offset="100%" stop-color="#A58320"/>
               </linearGradient>
             </defs>
-            <circle cx="100" cy="100" r="90" class="ring-bg"></circle>
-            <circle cx="100" cy="100" r="90" class="ring-progress" id="ring-progress"></circle>
+            <circle cx="100" cy="100" r="90" class="ring-bg"/>
+            <circle cx="100" cy="100" r="90" class="ring-progress" id="ring-progress"/>
           </svg>
           <div class="count-wrapper">
             <span id="tasbeh-count">0</span>
@@ -59,30 +43,36 @@
           </div>
         </button>
       </div>
-
       <div class="tasbeh-controls">
         <button id="btn-reset" class="btn-icon" aria-label="Reset Tasbeh">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
           </svg>
         </button>
       </div>
     </section>
 
-    <!-- SECTION 2: QIBLA -->
+    <!-- ═══ KIBLAT ═══ -->
     <section id="section-qibla" class="view-section">
       <div class="qibla-container">
         <div class="compass-wrapper">
-          <div class="compass-ring"></div>
-          <div class="compass-needle" id="compass-needle">
-             <div class="needle-tip"></div>
+          <div class="compass-rose"></div>
+          <div class="compass-labels">
+            <span class="n">U</span>
+            <span class="s">S</span>
+            <span class="e">T</span>
+            <span class="w">B</span>
           </div>
+          <div class="compass-needle" id="compass-needle"></div>
         </div>
-        <p id="qibla-status" class="status-text">Mencari lokasi...</p>
+        <div class="qibla-info">
+          <div class="qibla-degree" style="display:none"></div>
+          <p id="qibla-status">Mencari lokasi GPS…</p>
+        </div>
       </div>
     </section>
 
-    <!-- SECTION 3: JADWAL SHALAT -->
+    <!-- ═══ JADWAL SHALAT ═══ -->
     <section id="section-jadwal" class="view-section">
       <div class="jadwal-container">
         <div class="section-tabs">
@@ -90,24 +80,32 @@
           <button class="section-tab-btn" data-tab="jadwal-guide">Panduan</button>
         </div>
 
+        <!-- Sub-view: Jadwal -->
         <div id="subview-jadwal-main" class="subview active">
-          <h2 id="location-name" class="location-title">--</h2>
+          <p id="location-name" class="location-title">Menunggu GPS…</p>
           <div class="infinity-clock-wrapper">
+            <!-- SVG with glow filter -->
             <svg class="infinity-svg" viewBox="0 0 200 100">
-              <path class="infinity-path-bg" d="M34,62.4 c-17.7,0-32-14.3-32-32s14.3-32,32-32c11.3,0,21.3,5.9,27,14.8l20.4,32.4c5.7,8.9,15.7,14.8,27,14.8c17.7,0,32-14.3,32-32s-14.3-32-32-32 c-11.3,0-21.3,5.9-27,14.8l-20.4,32.4C48.3,56.5,38.3,62.4,34,62.4z"/>
-              <path id="infinity-progress" class="infinity-path-progress" d="M34,62.4 c-17.7,0-32-14.3-32-32s14.3-32,32-32c11.3,0,21.3,5.9,27,14.8l20.4,32.4c5.7,8.9,15.7,14.8,27,14.8c17.7,0,32-14.3,32-32s-14.3-32-32-32 c-11.3,0-21.3,5.9-27,14.8l-20.4,32.4C48.3,56.5,38.3,62.4,34,62.4z"/>
-              <g id="prayer-nodes"></g>
-              <circle id="time-indicator" r="4" fill="var(--gold)" />
+              <defs>
+                <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="2" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <!-- Background figure-8 path -->
+              <path class="infinity-path-bg"
+                d="M34,62 c-17.7,0-32-14.3-32-32 s14.3-32,32-32 c11.3,0,21.3,5.9,27,14.8 l20.4,32.4 c5.7,8.9,15.7,14.8,27,14.8 c17.7,0,32-14.3,32-32 s-14.3-32-32-32 c-11.3,0-21.3,5.9-27,14.8 l-20.4,32.4 C48.3,56.1,38.3,62,34,62z"/>
+              <!-- Dynamic arcs and labels rendered by JS into this SVG -->
             </svg>
           </div>
-          <div id="hijri-date" class="date-text">--</div>
+          <p id="hijri-date" class="date-text">--</p>
 
           <div class="next-prayer-card">
             <div id="next-prayer-name" class="next-prayer-name">--</div>
             <div id="countdown-timer" class="countdown-timer">--:--:--</div>
             <div id="contextual-niat" class="niat-display hidden">
-              <div id="niat-arabic" class="niat-arabic"></div>
-              <div id="niat-latin" class="niat-latin"></div>
+              <div id="niat-arabic"    class="niat-arabic"></div>
+              <div id="niat-latin"     class="niat-latin"></div>
               <div id="niat-translate" class="niat-translate"></div>
             </div>
           </div>
@@ -115,6 +113,7 @@
           <ul id="prayer-list" class="prayer-times-list"></ul>
         </div>
 
+        <!-- Sub-view: Panduan -->
         <div id="subview-jadwal-guide" class="subview">
           <div class="guide-tabs">
             <button class="guide-tab-btn active" data-guide="wudhu">Wudhu</button>
@@ -125,32 +124,31 @@
       </div>
     </section>
 
-    <!-- SECTION 4: DOA PILIHAN -->
+    <!-- ═══ DOA & SURAH ═══ -->
     <section id="section-doa" class="view-section">
       <div class="doa-container">
         <div class="doa-subtabs">
           <button class="subtab-btn active" data-doatype="doa">Do'a</button>
           <button class="subtab-btn" data-doatype="surah">Surah</button>
         </div>
-        <div class="doa-list" id="doa-list"></div>
+        <div id="doa-list"></div>
       </div>
     </section>
 
-    <!-- SECTION 5: SETTINGS -->
+    <!-- ═══ SETELAN ═══ -->
     <section id="section-settings" class="view-section">
       <div class="settings-container">
-        <h2 class="location-title">Setelan</h2>
         <div class="settings-group">
           <label>Ukuran Font</label>
           <div class="slider-wrapper">
-            <input type="range" id="font-size-slider" min="0.8" max="1.6" step="0.1" value="1.1">
+            <input type="range" id="font-size-slider" min="0.8" max="1.6" step="0.05" value="1.1">
             <span id="font-size-val">110%</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FLOATING TASBEH -->
+    <!-- Floating Tasbeh Button -->
     <div id="floating-tasbeh" class="floating-tasbeh hidden">
       <span id="floating-count">0</span>
       <div id="floating-cycle" class="floating-badge">0</div>
@@ -161,27 +159,27 @@
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-target="tasbeh">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/></svg>
       <span>Tasbeh</span>
     </button>
     <button class="nav-item" data-target="qibla">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
       <span>Kiblat</span>
     </button>
     <button class="nav-item" data-target="jadwal">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span>Shalat</span>
     </button>
     <button class="nav-item" data-target="doa">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
       <span>Do'a</span>
     </button>
     <button class="nav-item" data-target="settings">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9"/></svg>
       <span>Setelan</span>
     </button>
   </nav>
 
-  <script src="app.js?v=2.0"></script>
+  <script src="app.js?v=2.1"></script>
 </body>
 </html>
