@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2.4">
+  <link rel="stylesheet" href="style.css?v=2.6">
 </head>
 <body>
 
@@ -82,7 +82,6 @@
 
         <!-- Sub-view: Jadwal -->
         <div id="subview-jadwal-main" class="subview active">
-          <p id="location-name" class="location-title">Menunggu GPS…</p>
           <div class="infinity-clock-wrapper">
             <!-- SVG with glow filter -->
             <svg class="infinity-svg" viewBox="0 0 200 120">
@@ -98,6 +97,7 @@
               <!-- Dynamic arcs and labels rendered by JS into this SVG -->
             </svg>
           </div>
+          <p id="location-name" class="location-title">Menunggu GPS…</p>
           <p id="hijri-date" class="date-text">--</p>
 
           <div class="next-prayer-card">
@@ -197,6 +197,6 @@
     </button>
   </nav>
 
-  <script src="app.js?v=2.5"></script>
+  <script src="app.js?v=2.6"></script>
 </body>
 </html>

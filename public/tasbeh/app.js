@@ -316,7 +316,17 @@ function fetchPrayerTimes(lat, lng) {
       const t = data.data.timings;
       prayerTimesData = { Subuh: t.Fajr, Dzuhur: t.Dhuhr, Ashar: t.Asr, Maghrib: t.Maghrib, Isya: t.Isha };
       const $ = id => document.getElementById(id);
-      if ($('location-name')) $('location-name').textContent = `${lat.toFixed(2)}°, ${lng.toFixed(2)}°`;
+      // Show city name via Nominatim reverse geocoding
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
+        headers: { 'Accept-Language': 'id' }
+      }).then(r => r.json()).then(geo => {
+        const addr = geo.address || {};
+        const city = addr.city || addr.town || addr.village || addr.county || addr.state;
+        const label = city ? `📍 ${city}` : `📍 ${lat.toFixed(2)}°, ${lng.toFixed(2)}°`;
+        if ($('location-name')) $('location-name').textContent = label;
+      }).catch(() => {
+        if ($('location-name')) $('location-name').textContent = `📍 ${lat.toFixed(2)}°, ${lng.toFixed(2)}°`;
+      });
       if ($('hijri-date')) {
         const h = data.data.date.hijri;
         $('hijri-date').textContent = `${h.day} ${h.month.en} ${h.year} H`;
