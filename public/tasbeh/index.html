@@ -21,7 +21,7 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
   <!-- Styles CSS -->
-  <link rel="stylesheet" href="style.css?v=1.3">
+  <link rel="stylesheet" href="style.css?v=1.4">
 </head>
 <body>
 
@@ -48,28 +48,22 @@
                 <stop offset="0%" stop-color="var(--accent-gold)" />
                 <stop offset="100%" stop-color="var(--accent-dark)" />
               </linearGradient>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="8" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
             </defs>
             <circle cx="100" cy="100" r="90" class="ring-bg"></circle>
-            <circle cx="100" cy="100" r="90" class="ring-progress" id="ring-progress" filter="url(#glow)"></circle>
+            <circle cx="100" cy="100" r="90" class="ring-progress" id="ring-progress"></circle>
           </svg>
           <div class="count-wrapper">
             <span id="tasbeh-count">0</span>
             <span id="tasbeh-cycle">Putaran: 0</span>
             <span id="tasbeh-total" class="total-count-text">Total: 0</span>
           </div>
-          <div class="ripple-container" id="ripple-container"></div>
         </button>
       </div>
 
       <div class="tasbeh-controls">
         <button id="btn-reset" class="btn-icon" aria-label="Reset Tasbeh">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-            <path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
           </svg>
         </button>
       </div>
@@ -85,23 +79,19 @@
           </div>
         </div>
         <p id="qibla-status" class="status-text">Mencari lokasi...</p>
-        <button id="btn-calibrate" class="btn-primary">Kalibrasi Kompas</button>
       </div>
     </section>
 
     <!-- SECTION 3: JADWAL SHALAT -->
     <section id="section-jadwal" class="view-section">
       <div class="jadwal-container">
-        <!-- Sub-tabs for Jadwal vs Guide -->
         <div class="section-tabs">
           <button class="section-tab-btn active" data-tab="jadwal-main">Jadwal</button>
           <button class="section-tab-btn" data-tab="jadwal-guide">Panduan</button>
         </div>
 
         <div id="subview-jadwal-main" class="subview active">
-          <h2 id="location-name" class="location-title">Lokasi Anda</h2>
-          
-          <!-- INFINITY 24H VISUAL -->
+          <h2 id="location-name" class="location-title">--</h2>
           <div class="infinity-clock-wrapper">
             <svg class="infinity-svg" viewBox="0 0 200 100">
               <path class="infinity-path-bg" d="M34,62.4 c-17.7,0-32-14.3-32-32s14.3-32,32-32c11.3,0,21.3,5.9,27,14.8l20.4,32.4c5.7,8.9,15.7,14.8,27,14.8c17.7,0,32-14.3,32-32s-14.3-32-32-32 c-11.3,0-21.3,5.9-27,14.8l-20.4,32.4C48.3,56.5,38.3,62.4,34,62.4z"/>
@@ -109,27 +99,20 @@
               <g id="prayer-nodes"></g>
               <circle id="time-indicator" r="4" fill="var(--accent-gold)" />
             </svg>
-            <div id="hijri-date" class="date-text">...</div>
           </div>
+          <div id="hijri-date" class="date-text">--</div>
 
-          <!-- COUNTDOWN & NIAT -->
           <div class="next-prayer-card">
-            <div class="next-prayer-label">Menuju Shalat</div>
             <div id="next-prayer-name" class="next-prayer-name">--</div>
             <div id="countdown-timer" class="countdown-timer">--:--:--</div>
-            
-            <!-- CONTEXTUAL NIAT -->
-            <div id="contextual-niat" class="niat-display">
-              <div class="niat-label">Niat Shalat</div>
+            <div id="contextual-niat" class="niat-display hidden">
               <div id="niat-arabic" class="niat-arabic"></div>
               <div id="niat-latin" class="niat-latin"></div>
               <div id="niat-translate" class="niat-translate"></div>
             </div>
           </div>
 
-          <ul id="prayer-list" class="prayer-times-list">
-            <!-- Item diisi oleh JS -->
-          </ul>
+          <ul id="prayer-list" class="prayer-times-list"></ul>
         </div>
 
         <div id="subview-jadwal-guide" class="subview">
@@ -137,9 +120,7 @@
             <button class="guide-tab-btn active" data-guide="wudhu">Wudhu</button>
             <button class="guide-tab-btn" data-guide="shalat">Shalat</button>
           </div>
-          <div id="guide-content" class="guide-content">
-             <!-- Diisi oleh JS -->
-          </div>
+          <div id="guide-content" class="guide-content"></div>
         </div>
       </div>
     </section>
@@ -147,10 +128,9 @@
     <!-- SECTION 4: DOA PILIHAN -->
     <section id="section-doa" class="view-section">
       <div class="doa-container">
-        <h2 class="location-title">Do'a & Surah</h2>
         <div class="doa-subtabs">
-          <button class="subtab-btn active" data-doatype="doa">Do'a Pilihan</button>
-          <button class="subtab-btn" data-doatype="surah">Surat Pendek</button>
+          <button class="subtab-btn active" data-doatype="doa">Do'a</button>
+          <button class="subtab-btn" data-doatype="surah">Surah</button>
         </div>
         <div class="doa-list" id="doa-list"></div>
       </div>
@@ -161,16 +141,11 @@
       <div class="settings-container">
         <h2 class="location-title">Setelan</h2>
         <div class="settings-group">
-          <label for="font-size-slider">Ukuran Font</label>
+          <label>Ukuran Font</label>
           <div class="slider-wrapper">
-            <input type="range" id="font-size-slider" min="1" max="2" step="0.1" value="1.3">
-            <span id="font-size-val">130%</span>
+            <input type="range" id="font-size-slider" min="0.8" max="1.6" step="0.1" value="1.1">
+            <span id="font-size-val">110%</span>
           </div>
-          <p class="setting-desc">Dioptimalkan untuk Cover Screen ponsel lipat.</p>
-        </div>
-        <div class="settings-footer">
-          <p>FiveTimes v1.2</p>
-          <p>Created with Love by Anugrah</p>
         </div>
       </div>
     </section>
@@ -207,6 +182,6 @@
     </button>
   </nav>
 
-  <script src="app.js?v=1.2"></script>
+  <script src="app.js?v=1.4"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@ function applyFontScale(scale) {
 }
 
 // Init font scale
-const savedScale = localStorage.getItem('fivetimes-font-scale') || 1.3;
+const savedScale = localStorage.getItem('fivetimes-font-scale') || 1.1;
 if (fontSlider) {
   fontSlider.value = savedScale;
   applyFontScale(savedScale);
@@ -61,14 +61,11 @@ navItems.forEach(item => {
       else floatBtn.classList.remove('hidden');
     }
 
-    // Special trigger for SVG path calculation when entering search
-    if (target === 'jadwal') {
-      setTimeout(updateInfinityClock, 50);
-    }
+    if (target === 'jadwal') setTimeout(updateInfinityClock, 50);
   });
 });
 
-// SUB-TABS IN JADWAL (Jadwal vs Panduan)
+// SUB-TABS (Jadwal vs Panduan)
 const sectionTabs = document.querySelectorAll('.section-tab-btn');
 const subviews = document.querySelectorAll('.subview');
 
@@ -81,9 +78,7 @@ sectionTabs.forEach(tab => {
     subviews.forEach(v => v.classList.remove('active'));
     document.getElementById(`subview-${target}`).classList.add('active');
     
-    if (target === 'jadwal-main') {
-      setTimeout(updateInfinityClock, 50);
-    }
+    if (target === 'jadwal-main') setTimeout(updateInfinityClock, 50);
   });
 });
 
@@ -100,308 +95,59 @@ function initGuideTabs() {
 }
 
 // ----------------------------------------
-// TASBEH LOGIC (Core)
-// ----------------------------------------
-const btnTap = document.getElementById('btn-tap');
-const btnReset = document.getElementById('btn-reset');
-const countDisplay = document.getElementById('tasbeh-count');
-const ringProgress = document.getElementById('ring-progress');
-const rippleContainer = document.getElementById('ripple-container');
-
-const MAX_COUNT = 33;
-const CIRCUMFERENCE = 565.48;
-
-let currentCount = localStorage.getItem('tasbehCount') ? parseInt(localStorage.getItem('tasbehCount')) : 0;
-
-function updateTasbehUI() {
-  let displayNum = currentCount % MAX_COUNT;
-  let cycle = Math.floor(currentCount / MAX_COUNT);
-  if (currentCount > 0 && displayNum === 0) { displayNum = MAX_COUNT; cycle--; }
-  
-  if (countDisplay) countDisplay.textContent = displayNum;
-  const floatCount = document.getElementById('floating-count');
-  if (floatCount) floatCount.textContent = displayNum;
-  
-  const cycDisplay = document.getElementById('tasbeh-cycle');
-  if (cycDisplay) cycDisplay.textContent = `Putaran: ${cycle}`;
-  
-  const floatCyc = document.getElementById('floating-cycle');
-  if (floatCyc) floatCyc.textContent = cycle;
-  
-  const totDisplay = document.getElementById('tasbeh-total');
-  if (totDisplay) totDisplay.textContent = `Total: ${currentCount}`;
-  
-  if (ringProgress) {
-    const offset = CIRCUMFERENCE - (displayNum / MAX_COUNT) * CIRCUMFERENCE;
-    ringProgress.style.strokeDashoffset = offset;
-    if (displayNum === MAX_COUNT) ringProgress.classList.add('glow-active');
-    else ringProgress.classList.remove('glow-active');
-  }
-}
-
-function triggerHaptic() {
-  if (navigator.vibrate) {
-    if (currentCount > 0 && currentCount % MAX_COUNT === 0) navigator.vibrate([100, 50, 100]); 
-    else navigator.vibrate(40); 
-  }
-}
-
-function createRipple() {
-  if (!rippleContainer) return;
-  const ripple = document.createElement('div');
-  ripple.classList.add('ripple');
-  rippleContainer.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 600);
-}
-
-function incrementTasbeh() {
-  currentCount++;
-  localStorage.setItem('tasbehCount', currentCount);
-  updateTasbehUI();
-  triggerHaptic();
-  const tasbehSection = document.getElementById('section-tasbeh');
-  if (tasbehSection && tasbehSection.classList.contains('active')) createRipple();
-}
-
-if (btnTap) btnTap.addEventListener('click', incrementTasbeh);
-if (btnReset) {
-  btnReset.addEventListener('click', (e) => {
-    e.stopPropagation(); 
-    if (confirm("Reset penghitung tasbeh?")) {
-      currentCount = 0;
-      localStorage.setItem('tasbehCount', currentCount);
-      updateTasbehUI();
-    }
-  });
-}
-
-// ----------------------------------------
-// INFINITY CLOCK & PRAYER LOGIC
-// ----------------------------------------
-const prayerNodesGroup = document.getElementById('prayer-nodes');
-const timeIndicator = document.getElementById('time-indicator');
-const infinityPath = document.querySelector('.infinity-path-bg');
-const infinityProgress = document.getElementById('infinity-progress');
-
-let prayerTimesData = null;
-
-function updateInfinityClock() {
-  // If the infinityPath is not currently rendered (display:none), getTotalLength might fail or be 0
-  if (!infinityPath || infinityPath.offsetParent === null) return;
-  
-  const now = new Date();
-  const hours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-  const t = hours / 24; 
-  
-  const totalLength = infinityPath.getTotalLength();
-  if (totalLength === 0) return;
-
-  const currentPos = t * totalLength;
-  const point = infinityPath.getPointAtLength(currentPos);
-  
-  if (timeIndicator) {
-    timeIndicator.setAttribute('cx', point.x);
-    timeIndicator.setAttribute('cy', point.y);
-  }
-  
-  if (infinityProgress) {
-    infinityProgress.style.strokeDasharray = totalLength;
-    infinityProgress.style.strokeDashoffset = totalLength - currentPos;
-  }
-
-  // Render Nodes
-  if (prayerTimesData && prayerNodesGroup) {
-    prayerNodesGroup.innerHTML = '';
-    Object.entries(prayerTimesData).forEach(([name, time]) => {
-      const [h, m] = time.split(':').map(Number);
-      const pt = (h + m/60) / 24;
-      const pPoint = infinityPath.getPointAtLength(pt * totalLength);
-      
-      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      circle.setAttribute('cx', pPoint.x);
-      circle.setAttribute('cy', pPoint.y);
-      circle.setAttribute('r', '3');
-      circle.classList.add('prayer-node');
-      prayerNodesGroup.appendChild(circle);
-    });
-  }
-}
-
-// ----------------------------------------
-// JADWAL & NIAT SHALAT
+// DATA CONTENT: NIAT & DOA
 // ----------------------------------------
 const niatData = {
   'Subuh': {
-    arabic: "أُصَلِّيْ فَرْضَ الصُّبْحِ رَكْعَتَيْنِ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً مَأْمُوْمًا لِلّٰهِ تَعَالَى",
-    latin: "Ushallii fardhash-shubhi rak‘ataini mustaqbilal-qiblati adaa-an ma’muuman lillaahi ta‘aalaa.",
-    translate: "Niat shalat fardu Subuh (2 rakaat)"
+    arabic: "أُصَلِّيْ فَرْضَ الصُّبْحِ رَكْعَتَيْنِ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى",
+    latin: "Ushallii fardhash-shubhi rak'ataini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.",
+    translate: "Niat Shalat Subuh"
   },
   'Dzuhur': {
-    arabic: "أُصَلِّيْ فَرْضَ الظُّهْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً مَأْمُوْمًا لِلّٰهِ تَعَالَى",
-    latin: "Ushallii fardhazh-zhuhri arba‘a raka‘aatin mustaqbilal-qiblati adaa-an ma’muuman lillaahi ta‘aalaa.",
-    translate: "Niat shalat fardu Zuhur (4 rakaat)"
+    arabic: "أُصَلِّيْ فَرْضَ الظُّهْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى",
+    latin: "Ushallii fardhazh-zhuhri arba'a raka'aatini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.",
+    translate: "Niat Shalat Dzuhur"
   },
   'Ashar': {
-    arabic: "أُصَلِّيْ فَرْضَ الْعَصْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً مَأْمُوْمًا لِلّٰهِ تَعَالَى",
-    latin: "Ushallii fardhal-‘ashri arba‘a raka‘aatin mustaqbilal-qiblati adaa-an ma’muuman lillaahi ta‘aalaa.",
-    translate: "Niat shalat fardu Ashar (4 rakaat)"
+    arabic: "أُصَلِّيْ فَرْضَ الْعَصْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى",
+    latin: "Ushallii fardhal 'ashri arba'a raka'aatini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.",
+    translate: "Niat Shalat Ashar"
   },
   'Maghrib': {
-    arabic: "أُصَلِّيْ فَرْضَ الْمَغْرِبِ tsalātha raka‘ātin mustaqbilal-qiblati adā-an ma’mūman lillāhi ta‘ālā.",
-    latin: "Ushallii fardhal-maghribi tsalaatha raka‘aatin mustaqbilal-qiblati adaa-an ma’muuman lillaahi ta‘aalaa.",
-    translate: "Niat shalat fardu Maghrib (3 rakaat)"
+    arabic: "أُصَلِّيْ فَرْضَ الْمَغْرِبِ ثَلَاثَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى",
+    latin: "Ushallii fardhal maghribi tsalaatha raka'aatini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.",
+    translate: "Niat Shalat Maghrib"
   },
   'Isya': {
-    arabic: "أُصَلِّيْ فَرْضَ الْعِشَاءِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً مَأْمُوْمًا لِلّٰهِ تَعَالَى",
-    latin: "Ushallii fardhal-‘isyaa-i arba‘a raka‘aatin mustaqbilal-qiblati adaa-an ma’muuman lillaahi ta‘aalaa.",
-    translate: "Niat shalat fardu Isya (4 rakaat)"
+    arabic: "أُصَلِّيْ فَرْضَ الْعِشَاءِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى",
+    latin: "Ushallii fardhal 'isyaa-i arba'a raka'aatini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.",
+    translate: "Niat Shalat Isya"
   }
 };
 
-function fetchPrayerTimes(lat, lng) {
-  const timestamp = Math.floor(Date.now() / 1000);
-  const apiUrl = `https://api.aladhan.com/v1/timings/${timestamp}?latitude=${lat}&longitude=${lng}&method=20`;
-
-  fetch(apiUrl).then(res => res.json()).then(data => {
-    const t = data.data.timings;
-    prayerTimesData = { 'Subuh': t.Fajr, 'Sunrise': t.Sunrise, 'Dzuhur': t.Dhuhr, 'Ashar': t.Asr, 'Maghrib': t.Maghrib, 'Isya': t.Isha };
-    
-    const locName = document.getElementById('location-name');
-    if (locName) locName.textContent = `Koordinat: ${lat.toFixed(2)}, ${lng.toFixed(2)}`;
-    
-    const hijDate = document.getElementById('hijri-date');
-    if (hijDate) hijDate.textContent = `${data.data.date.hijri.day} ${data.data.date.hijri.month.en} ${data.data.date.hijri.year} H`;
-    
-    renderPrayerList();
-    startCountdown();
-    updateInfinityClock();
-  }).catch(console.error);
-}
-
-function renderPrayerList() {
-  const list = document.getElementById('prayer-list');
-  if (!list) return;
-  list.innerHTML = '';
-  Object.entries(prayerTimesData).forEach(([name, time]) => {
-    let li = document.createElement('li');
-    li.className = 'prayer-item';
-    li.innerHTML = `${name} <span>${time}</span>`;
-    list.appendChild(li);
-  });
-}
-
-function startCountdown() {
-  setInterval(() => {
-    if (!prayerTimesData) return;
-    const now = new Date();
-    let nextName = '--';
-    let nextDiff = '--:--:--';
-    const currentMins = now.getHours() * 60 + now.getMinutes();
-
-    let found = false;
-    for (const [name, time] of Object.entries(prayerTimesData)) {
-      if (name === 'Sunrise') continue;
-      const [h, m] = time.split(':').map(Number);
-      const prayerMins = h * 60 + m;
-      if (prayerMins > currentMins) {
-        nextName = name;
-        const diffMs = (prayerMins - currentMins) * 60 * 1000 - now.getSeconds() * 1000;
-        const hrs = Math.floor(diffMs / 3600000);
-        const mins = Math.floor((diffMs % 3600000) / 60000);
-        const secs = Math.floor((diffMs % 60000) / 1000);
-        nextDiff = `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        found = true;
-        break;
-      }
-    }
-    
-    if (!found) {
-      nextName = "Subuh (Besok)";
-      nextDiff = "--:--:--";
-    }
-
-    const nextPrName = document.getElementById('next-prayer-name');
-    if (nextPrName) nextPrName.textContent = nextName;
-    
-    const countTimer = document.getElementById('countdown-timer');
-    if (countTimer) countTimer.textContent = nextDiff;
-    
-    const cleanName = nextName.split(' ')[0];
-    const niatArabic = document.getElementById('niat-arabic');
-    const niatLatin = document.getElementById('niat-latin');
-    const niatTrans = document.getElementById('niat-translate');
-    const niatBox = document.getElementById('contextual-niat');
-    
-    if (niatData[cleanName]) {
-      if (niatArabic) niatArabic.textContent = niatData[cleanName].arabic;
-      if (niatLatin) niatLatin.textContent = niatData[cleanName].latin;
-      if (niatTrans) niatTrans.textContent = niatData[cleanName].translate;
-      if (niatBox) niatBox.classList.remove('hidden');
-    } else {
-      if (niatBox) niatBox.classList.add('hidden');
-    }
-    updateInfinityClock();
-  }, 1000);
-}
-
-// ----------------------------------------
-// QIBLA LOGIC
-// ----------------------------------------
-const compassNeedle = document.getElementById('compass-needle');
-const qiblaStatus = document.getElementById('qibla-status');
-let qiblaAzimuth = null;
-
-function initQibla() {
-  if (!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude: lat, longitude: lng } = pos.coords;
-    const phiK = 21.422487 * Math.PI / 180.0;
-    const lambdaK = 39.826206 * Math.PI / 180.0;
-    const phi = lat * Math.PI / 180.0;
-    const lambda = lng * Math.PI / 180.0;
-    const y = Math.sin(lambdaK - lambda);
-    const x = Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(lambdaK - lambda);
-    qiblaAzimuth = (Math.atan2(y, x) * 180.0 / Math.PI + 360) % 360;
-    if (qiblaStatus) qiblaStatus.innerHTML = `GPS Terkunci.<br>Kiblat: ${Math.round(qiblaAzimuth)}°`;
-    fetchPrayerTimes(lat, lng);
-  });
-}
-
-window.addEventListener("deviceorientationabsolute", (e) => {
-  if (qiblaAzimuth === null || !compassNeedle) return;
-  let compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-  compassNeedle.style.transform = `rotate(${qiblaAzimuth - compass}deg)`;
-}, true);
-
-// ----------------------------------------
-// GUIDES & DOA DATA
-// ----------------------------------------
-const guideContent = document.getElementById('guide-content');
-function renderGuideContent(type) {
-  if (!guideContent) return;
-  if (type === 'wudhu') {
-    guideContent.innerHTML = `
-      <div class="doa-card">
-        <div class="doa-title">Niat Wudhu</div>
-        <div class="doa-arabic">نَوَيْتُ الْوُضُوءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِلَّهِ تَعَالَى</div>
-        <div class="doa-latin">Nawaitul wudhuu-a liraf'il hadatsil ashghari fardhal lillaahi ta'aala.</div>
-      </div>
-      <div class="doa-card">
-        <div class="doa-title">Tahapan Wudhu</div>
-        <p class="doa-translate">1. Cuci tangan & sela jari<br>2. Berkumur 3x<br>3. Bersihkan hidung 3x<br>4. Basuh muka 3x (Sambil niat)<br>5. Basuh tangan hingga siku 3x<br>6. Usap kepala/rambut<br>7. Usap telinga<br>8. Basuh kaki hingga mata kaki 3x</p>
-      </div>`;
-  } else {
-    guideContent.innerHTML = `
-      <div class="doa-card">
-        <div class="doa-title">Rukun Shalat</div>
-        <p class="doa-translate">1. Niat & Berdiri tegak<br>2. Takbiratul Ihram<br>3. Al-Fatihah & Surat<br>4. Ruku' & I'tidal<br>5. Sujud 2x<br>6. Duduk antara 2 sujud<br>7. Tahiyat Akhir<br>8. Salam</p>
-      </div>`;
-  }
-}
-
 const doaListData = [
-  { type: "doa", category: "Do'a", title: "Sapu Jagat", arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً...", latin: "Rabbana atina...", translate: "..." },
-  { type: "surah", category: "Surat", title: "QS. Al-Ikhlas", arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ...", latin: "Qul huwallahu ahad...", translate: "..." }
+  // --- DOA PILIHAN ---
+  { type: "doa", category: "Keseharian", title: "Sapu Jagat", arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", latin: "Rabbana atina...", translate: "Kebaikan Dunia & Akhirat" },
+  { type: "doa", category: "Keseharian", title: "Kedua Orang Tua", arabic: "رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا", latin: "Rabbighfirli...", translate: "Mohon Ampunan Orang Tua" },
+  { type: "doa", category: "Ibadah", title: "Niat Wudhu", arabic: "نَوَيْتُ الْوُضُوءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِلَّهِ تَعَالَى", latin: "Nawaitul wudhuu-a...", translate: "Menghilangkan Hadas Kecil" },
+  { type: "doa", category: "Keseharian", title: "Penerang Hati", arabic: "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي", latin: "Rabbisyrahli...", translate: "Kemudahan Urusan" },
+  
+  // --- SURAT PENDEK ---
+  { type: "surah", category: "Juz 30", title: "QS. Al-Fatihah", arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ... صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ", latin: "Bismillahir-rahman...", translate: "Pembukaan" },
+  { type: "surah", category: "Juz 30", title: "QS. An-Nas", arabic: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ... مِنَ الْجِنَّةِ وَالنَّاسِ", latin: "Qul a'udzu birabbin-nas...", translate: "Manusia" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Falaq", arabic: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ... وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ", latin: "Qul a'uudzu birabbil-falaq...", translate: "Waktu Subuh" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Ikhlas", arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ... وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ", latin: "Qul huwallahu ahad...", translate: "Memurnikan Keesaan Allah" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Lahab", arabic: "تَبَّتْ يَدَا أَبِي لَهَبٍ... فِي جِيدِهَا حَبْلٌ مِنْ مَسَدٍ", latin: "Tabbat yadaa...", translate: "Gejolak Api" },
+  { type: "surah", category: "Juz 30", title: "QS. An-Nasr", arabic: "إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ... إِنَّهُ كَانَ تَوَّابًا", latin: "Idzaa jaa'a...", translate: "Pertolongan" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Kafirun", arabic: "قُلْ يَا أَيُّهَا الْكَافِرُونَ... لَكُمْ دِينُكُمْ وَلِيَ دِينِ", latin: "Qul yaa ayyuhal...", translate: "Orang-orang Kafir" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Kautsar", arabic: "إِنَّا أَعْطَيْنَاكَ الْكَوْتْسَرَ... إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ", latin: "Innaa a'thainaaka...", translate: "Nikmat yang Banyak" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Ma'un", arabic: "أَرَأَيْتَ الَّذِي يُكَذِّبُ بِالدِّينِ... وَيَمْنَعُونَ الْمَاعُونَ", latin: "Ara'aitalladzii...", translate: "Barang-barang Berguna" },
+  { type: "surah", category: "Juz 30", title: "QS. Quraisy", arabic: "لِإِيلَافِ قُرَيْشٍ... وَآمَنَهُمْ مِنْ خَوْفٍ", latin: "Li-iilaafi quraisyin...", translate: "Suku Quraisy" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Fil", arabic: "أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ... فَجَعELAHUM KA'ASFIN MA'KUL", latin: "Alam tara kaifa...", translate: "Gajah" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Humazah", arabic: "وَيْلٌ لِكُلِّ هُمَزَةٍ لُمَزَةٍ... فِي عَمَدٍ مُمَدَّدَةٍ", latin: "Wailul likulli...", translate: "Pengumpat" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Asr", arabic: "وَالْعَصْرِ... وَتَوَاصَوْا بِالصَّبْرِ", latin: "Wal 'ashr...", translate: "Masa/Waktu" },
+  { type: "surah", category: "Juz 30", title: "QS. At-Takatsur", arabic: "أَلْهَاكُمُ التَّكَاثُرُ... ثُمَّ لَتُسْأَلُنَّ يَوْمَئِذٍ عَنِ النَّعِيمِ", latin: "Alhaakumut-takaatsur...", translate: "Bermegah-megahan" },
+  { type: "surah", category: "Juz 30", title: "QS. Al-Qari'ah", arabic: "الْقَارِعَةُ... نَارٌ حَامِيَةٌ", latin: "Al-qari'ah...", translate: "Hari Kiamat" }
 ];
 
 function renderDoaList() {
@@ -414,24 +160,153 @@ function renderDoaList() {
   doaListData.filter(d => d.type === activeType).forEach(doa => {
     let card = document.createElement('div');
     card.className = 'doa-card';
-    card.innerHTML = `<div class="doa-category">${doa.category}</div><div class="doa-title">${doa.title}</div><div class="doa-arabic">${doa.arabic}</div>`;
+    card.innerHTML = `<div class="doa-category">${doa.category}</div><div class="doa-title">${doa.title}</div><div class="doa-arabic">${doa.arabic}</div><div class="doa-translate">${doa.translate}</div>`;
     container.appendChild(card);
   });
 }
 
-document.querySelectorAll('.subtab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderDoaList();
-  });
-});
+// ----------------------------------------
+// TASBEH LOGIC
+// ----------------------------------------
+const btnTap = document.getElementById('btn-tap');
+const btnReset = document.getElementById('btn-reset');
+const countDisplay = document.getElementById('tasbeh-count');
+const ringProgress = document.getElementById('ring-progress');
 
-// INITIALIZE
+const MAX_COUNT = 33;
+const CIRCUMFERENCE = 565.48;
+let currentCount = localStorage.getItem('tasbehCount') ? parseInt(localStorage.getItem('tasbehCount')) : 0;
+
+function updateTasbehUI() {
+  let displayNum = currentCount % MAX_COUNT;
+  let cycle = Math.floor(currentCount / MAX_COUNT);
+  if (currentCount > 0 && displayNum === 0) { displayNum = MAX_COUNT; cycle--; }
+  
+  if (countDisplay) countDisplay.textContent = displayNum;
+  document.getElementById('floating-count').textContent = displayNum;
+  document.getElementById('tasbeh-cycle').textContent = `Putaran: ${cycle}`;
+  document.getElementById('floating-cycle').textContent = cycle;
+  document.getElementById('tasbeh-total').textContent = `Total: ${currentCount}`;
+  
+  if (ringProgress) {
+    const offset = CIRCUMFERENCE - (displayNum / MAX_COUNT) * CIRCUMFERENCE;
+    ringProgress.style.strokeDashoffset = offset;
+  }
+}
+
+function incrementTasbeh() {
+  currentCount++;
+  localStorage.setItem('tasbehCount', currentCount);
+  updateTasbehUI();
+  if (navigator.vibrate) navigator.vibrate(currentCount % 33 === 0 ? [100, 50, 100] : 40);
+}
+
+if (btnTap) btnTap.addEventListener('click', incrementTasbeh);
+if (btnReset) btnReset.addEventListener('click', () => { if(confirm("Reset?")){ currentCount=0; updateTasbehUI(); } });
+
+// ----------------------------------------
+// INFINITY CLOCK & PRAYER TIMES
+// ----------------------------------------
+const infinityPath = document.querySelector('.infinity-path-bg');
+const timeIndicator = document.getElementById('time-indicator');
+const infinityProgress = document.getElementById('infinity-progress');
+const prayerNodesGroup = document.getElementById('prayer-nodes');
+let prayerTimesData = null;
+
+function updateInfinityClock() {
+  if (!infinityPath || infinityPath.offsetParent === null) return;
+  const totalLength = infinityPath.getTotalLength();
+  const now = new Date();
+  const t = (now.getHours() + now.getMinutes()/60) / 24;
+  const point = infinityPath.getPointAtLength(t * totalLength);
+  
+  if (timeIndicator) { timeIndicator.setAttribute('cx', point.x); timeIndicator.setAttribute('cy', point.y); }
+  if (infinityProgress) { infinityProgress.style.strokeDasharray = totalLength; infinityProgress.style.strokeDashoffset = totalLength - (t * totalLength); }
+
+  if (prayerTimesData) {
+    prayerNodesGroup.innerHTML = '';
+    Object.entries(prayerTimesData).forEach(([name, time]) => {
+      const [h, m] = time.split(':').map(Number);
+      const pt = (h + m/60) / 24;
+      const pPoint = infinityPath.getPointAtLength(pt * totalLength);
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute('cx', pPoint.x); circle.setAttribute('cy', pPoint.y);
+      circle.setAttribute('r', '3'); circle.classList.add('prayer-node');
+      prayerNodesGroup.appendChild(circle);
+    });
+  }
+}
+
+function fetchPrayerTimes(lat, lng) {
+  const ts = Math.floor(Date.now() / 1000);
+  fetch(`https://api.aladhan.com/v1/timings/${ts}?latitude=${lat}&longitude=${lng}&method=20`)
+    .then(r => r.json()).then(data => {
+      const t = data.data.timings;
+      prayerTimesData = { 'Subuh': t.Fajr, 'Dzuhur': t.Dhuhr, 'Ashar': t.Asr, 'Maghrib': t.Maghrib, 'Isya': t.Isha };
+      document.getElementById('location-name').textContent = `Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}`;
+      document.getElementById('hijri-date').textContent = `${data.data.date.hijri.day} ${data.data.date.hijri.month.en} ${data.data.date.hijri.year} H`;
+      renderPrayerList();
+      startCountdown();
+      updateInfinityClock();
+    });
+}
+
+function renderPrayerList() {
+  const list = document.getElementById('prayer-list');
+  list.innerHTML = '';
+  Object.entries(prayerTimesData).forEach(([name, time]) => {
+    list.innerHTML += `<li class="prayer-item">${name} <span>${time}</span></li>`;
+  });
+}
+
+function startCountdown() {
+  setInterval(() => {
+    if (!prayerTimesData) return;
+    const now = new Date();
+    const curM = now.getHours() * 60 + now.getMinutes();
+    let next = null;
+
+    for (const [name, time] of Object.entries(prayerTimesData)) {
+      const [h, m] = time.split(':').map(Number);
+      if (h * 60 + m > curM) { next = { name, h, m }; break; }
+    }
+    
+    if (!next) next = { name: "Subuh", h: 4, m: 30 }; // Simplified
+    
+    document.getElementById('next-prayer-name').textContent = next.name;
+    const clean = next.name.split(' ')[0];
+    if (niatData[clean]) {
+      document.getElementById('niat-arabic').textContent = niatData[clean].arabic;
+      document.getElementById('niat-latin').textContent = niatData[clean].latin;
+      document.getElementById('niat-translate').textContent = niatData[clean].translate;
+      document.getElementById('contextual-niat').classList.remove('hidden');
+    }
+    updateInfinityClock();
+  }, 1000);
+}
+
+function initQibla() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      fetchPrayerTimes(pos.coords.latitude, pos.coords.longitude);
+    });
+  }
+}
+
+function renderGuideContent(type) {
+  const content = document.getElementById('guide-content');
+  if (type === 'wudhu') content.innerHTML = `<div class="doa-card"><div class="doa-title">Niat Wudhu</div><div class="doa-arabic">نَوَيْتُ الْوُضُوءَ...</div></div>`;
+  else content.innerHTML = `<div class="doa-card"><div class="doa-title">Rukun Shalat</div></div>`;
+}
+
+// INIT
 initQibla();
 updateTasbehUI();
 renderDoaList();
 renderGuideContent('wudhu');
 initGuideTabs();
 setInterval(updateInfinityClock, 60000);
-setTimeout(updateInfinityClock, 1000);
+document.querySelectorAll('.subtab-btn').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); renderDoaList();
+}));
