@@ -567,6 +567,16 @@ function renderGuideContent(type) {
       ? "Allahumma shalli 'alaa sayyidinaa Muhammad wa 'alaa aali sayyidinaa Muhammad, kamaa shallaita 'alaa sayyidinaa Ibraahiim wa 'alaa aali sayyidinaa Ibraahiim. Wa baarik 'alaa sayyidinaa Muhammad wa 'alaa aali sayyidinaa Muhammad, kamaa baarakta 'alaa sayyidinaa Ibraahiim wa 'alaa aali sayyidinaa Ibraahiim, fil-'aalamiina innaka Hamiidum Majiid."
       : "Allahumma shalli 'alaa Muhammad wa 'alaa aali Muhammad, kamaa shallaita 'alaa Ibraahiim wa 'alaa aali Ibraahiim. Wa baarik 'alaa Muhammad wa 'alaa aali Muhammad, kamaa baarakta 'alaa Ibraahiim wa 'alaa aali Ibraahiim, innaka Hamiidum Majiid.";
 
+    const antaraSujudArab = isNU
+      ? 'رَبِّ اغْفِرْ لِي وَارْحَمْنِي وَاجْبُرْنِي وَارْفَعْنِي وَارْزُقْنِي وَاهْدِنِي وَعَافِنِي وَاعْفُ عَنِّي'
+      : 'رَبِّ اغْفِرْ لِي، رَبِّ اغْفِرْ لِي';
+    const antaraSujudLatin = isNU
+      ? "Rabbighfirlii warhamnii wajburnii warfa'nii warzuqnii wahdinii wa 'aafinii wa'fu 'annii."
+      : 'Rabbighfirlii, rabbighfirlii.';
+    const antaraSujudSrc = isNU
+      ? '(HR. Abu Dawud no. 850, Ibnu Majah — versi NU)'
+      : '(HR. An-Nasa\'i, dinilai shahih Al-Albani — versi Muhammadiyah)';
+
     const qunutBlock = isNU ? `
         <div class="guide-step mazhab-highlight">
           <span class="step-num">6b</span>
@@ -621,9 +631,9 @@ function renderGuideContent(type) {
         </div>
 
         <div class="guide-step"><span class="step-num">8</span>
-          <b>Duduk antara dua sujud</b><br>
-          <span class="step-arabic">رَبِّ اغْفِرْ لِي، رَبِّ اغْفِرْ لِي</span>
-          <span class="step-latin">Rabbighfir lii, rabbighfir lii.</span>
+          <b>Duduk antara dua sujud</b> <span class="src-tag">${antaraSujudSrc}</span><br>
+          <span class="step-arabic">${antaraSujudArab}</span>
+          <span class="step-latin">${antaraSujudLatin}</span>
         </div>
 
         <div class="guide-step"><span class="step-num">9</span>
