@@ -74,13 +74,33 @@ document.querySelectorAll('.subtab-btn').forEach(btn => {
   });
 });
 
-// ── NIAT DATA ──
+// ── NIAT DATA (Sumber: Fiqh Syafi'i, umum diamalkan) ──
 const niatData = {
-  Subuh:   { arabic: 'أُصَلِّيْ فَرْضَ الصُّبْحِ رَكْعَتَيْنِ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhash-shubhi rak'ataini mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Subuh 2 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
-  Dzuhur:  { arabic: 'أُصَلِّيْ فَرْضَ الظُّهْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhazh-zhuhri arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Zuhur 4 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
-  Ashar:   { arabic: 'أُصَلِّيْ فَرْضَ الْعَصْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhal 'ashri arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Ashar 4 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
-  Maghrib: { arabic: 'أُصَلِّيْ فَرْضَ الْمَغْرِبِ ثَلَاثَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhal maghribi tsalaatha raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Maghrib 3 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' },
-  Isya:    { arabic: 'أُصَلِّيْ فَرْضَ الْعِشَاءِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى', latin: "Ushallii fardhal 'isyaa-i arba'a raka'aatin mustaqbilal qiblati adaa-an lillaahi ta'aalaa.", translate: 'Niat shalat fardu Isya 4 rakaat, menghadap kiblat, tunai karena Allah Ta\'ala.' }
+  Subuh: {
+    arabic:    'أُصَلِّيْ فَرْضَ الصُّبْحِ رَكْعَتَيْنِ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى',
+    latin:     "Ushalli fardhash-shubhi rak'ataini mustaqbilal qiblati ada'an lillaahi ta'aala.",
+    translate: "Aku niat melakukan shalat fardhu Subuh dua rakaat, menghadap kiblat, tunai karena Allah Ta'ala."
+  },
+  Dzuhur: {
+    arabic:    'أُصَلِّيْ فَرْضَ الظُّهْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى',
+    latin:     "Ushalli fardhazh-zhuhri arba'a raka'aatin mustaqbilal qiblati ada'an lillaahi ta'aala.",
+    translate: "Aku niat melakukan shalat fardhu Dzuhur empat rakaat, menghadap kiblat, tunai karena Allah Ta'ala."
+  },
+  Ashar: {
+    arabic:    'أُصَلِّيْ فَرْضَ الْعَصْرِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى',
+    latin:     "Ushalli fardhal-'ashri arba'a raka'aatin mustaqbilal qiblati ada'an lillaahi ta'aala.",
+    translate: "Aku niat melakukan shalat fardhu Ashar empat rakaat, menghadap kiblat, tunai karena Allah Ta'ala."
+  },
+  Maghrib: {
+    arabic:    'أُصَلِّيْ فَرْضَ الْمَغْرِبِ ثَلَاثَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى',
+    latin:     "Ushalli fardhal-maghribi tsalaatsa raka'aatin mustaqbilal qiblati ada'an lillaahi ta'aala.",
+    translate: "Aku niat melakukan shalat fardhu Maghrib tiga rakaat, menghadap kiblat, tunai karena Allah Ta'ala."
+  },
+  Isya: {
+    arabic:    'أُصَلِّيْ فَرْضَ الْعِشَاءِ أَرْبَعَ رَكَعَاتٍ مُسْتَقْبِلَ الْقِبْلَةِ أَدَاءً لِلّٰهِ تَعَالَى',
+    latin:     "Ushalli fardhal-'isha'i arba'a raka'aatin mustaqbilal qiblati ada'an lillaahi ta'aala.",
+    translate: "Aku niat melakukan shalat fardhu Isya empat rakaat, menghadap kiblat, tunai karena Allah Ta'ala."
+  }
 };
 
 // ── DOA DATA ──
@@ -475,43 +495,95 @@ function renderGuideContent(type) {
   if (type === 'wudhu') {
     content.innerHTML = `
       <div class="doa-card">
-        <div class="doa-title">Niat Wudhu</div>
-        <div class="doa-arabic">نَوَيْتُ الْوُضُوءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِلَّهِ تَعَالَى</div>
-        <div class="doa-latin">Nawaitul wudhuu-a liraf'il hadatsil ashghari fardhan lillaahi ta'aalaa.</div>
-        <div class="doa-translate">Aku niat wudhu untuk menghilangkan hadas kecil, fardhu karena Allah Ta'ala.</div>
+        <div class="doa-title">Niat Wudhu <span style="font-size:0.65em;color:var(--dim);font-weight:400">(Mazhab Syafi'i)</span></div>
+        <div class="doa-arabic">نَوَيْتُ الْوُضُوءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِللهِ تَعَالَى</div>
+        <div class="doa-latin">Nawaitul wudhu'a liraf'il hadatsil ashghari fardhal lillaahi ta'aala.</div>
+        <div class="doa-translate">Aku niat berwudhu untuk menghilangkan hadas kecil, fardu karena Allah Ta'ala.</div>
       </div>
       <div class="guide-steps-card">
         <div class="doa-title">Urutan Berwudhu</div>
-        <div class="guide-step"><span class="step-num">1</span> Niat dalam hati</div>
-        <div class="guide-step"><span class="step-num">2</span> Basuh telapak tangan 3×</div>
+        <div class="guide-step"><span class="step-num">1</span> Niat dalam hati sambil membaca Bismillah</div>
+        <div class="guide-step"><span class="step-num">2</span> Basuh kedua telapak tangan 3×</div>
         <div class="guide-step"><span class="step-num">3</span> Berkumur 3×</div>
-        <div class="guide-step"><span class="step-num">4</span> Bersihkan hidung 3×</div>
-        <div class="guide-step"><span class="step-num">5</span> Basuh wajah 3×</div>
-        <div class="guide-step"><span class="step-num">6</span> Basuh tangan hingga siku (kanan dulu) 3×</div>
+        <div class="guide-step"><span class="step-num">4</span> Hirub air ke hidung lalu keluarkan 3×</div>
+        <div class="guide-step"><span class="step-num">5</span> Basuh seluruh wajah 3×</div>
+        <div class="guide-step"><span class="step-num">6</span> Basuh tangan kanan hingga siku 3×, lalu tangan kiri 3×</div>
         <div class="guide-step"><span class="step-num">7</span> Usap sebagian kepala 1×</div>
-        <div class="guide-step"><span class="step-num">8</span> Usap telinga 1×</div>
-        <div class="guide-step"><span class="step-num">9</span> Basuh kaki hingga mata kaki (kanan dulu) 3×</div>
+        <div class="guide-step"><span class="step-num">8</span> Masukkan jari telunjuk ke dalam telinga, ibu jari mengusap belakang telinga 1×</div>
+        <div class="guide-step"><span class="step-num">9</span> Basuh kaki kanan hingga mata kaki 3×, lalu kaki kiri 3×</div>
       </div>
       <div class="doa-card">
-        <div class="doa-title">Doa Sesudah Wudhu</div>
-        <div class="doa-arabic">أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ</div>
-        <div class="doa-latin">Asyhadu allaa ilaaha illallaahu wahdahu laa syariika lahu wa asyhadu anna muhammadan 'abduhu wa rasuuluh.</div>
+        <div class="doa-title">Doa Sesudah Wudhu <span style="font-size:0.65em;color:var(--dim);font-weight:400">(HR. Tirmidzi, shahih)</span></div>
+        <div class="doa-arabic">أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ، اللَّهُمَّ اجْعَلْنِى مِنَ التَّوَّابِينَ وَاجْعَلْنِى مِنَ الْمُتَطَهِّرِينَ</div>
+        <div class="doa-latin">Asyhadu an laa ilaaha illallaahu wahdahu laa syariika lahu, wa asyhadu anna Muhammadan 'abduhu wa rasuuluh. Allaahummaj-'alnii minat-tawwaabiina waj-'alnii minal-mutathahhiriin.</div>
+        <div class="doa-translate">Aku bersaksi bahwa tiada Tuhan selain Allah Yang Maha Esa, tiada sekutu bagi-Nya. Dan aku bersaksi bahwa Muhammad adalah hamba dan utusan-Nya. Ya Allah, jadikanlah aku termasuk orang yang bertaubat dan jadikanlah aku termasuk orang yang menyucikan diri.</div>
       </div>`;
   } else {
     content.innerHTML = `
       <div class="guide-steps-card">
-        <div class="doa-title">Urutan & Bacaan Shalat</div>
-        <div class="guide-step"><span class="step-num">1</span> <b>Niat</b> — dalam hati sesuai shalat</div>
-        <div class="guide-step"><span class="step-num">2</span> <b>Takbiratul Ihram</b><br><span class="step-arabic">اللَّهُ أَكْبَرُ</span><span class="step-latin">Allaahu Akbar</span></div>
-        <div class="guide-step"><span class="step-num">3</span> <b>Doa Iftitah</b><br><span class="step-arabic">اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ...</span><span class="step-latin">Allaahumma baa'id baynii wa bayna khathaayaaya...</span></div>
-        <div class="guide-step"><span class="step-num">4</span> <b>Al-Fatihah</b> — (wajib setiap rakaat)</div>
-        <div class="guide-step"><span class="step-num">5</span> <b>Ruku'</b><br><span class="step-arabic">سُبْحَانَ رَبِّيَ الْعَظِيمِ وَبِحَمْدِهِ</span><span class="step-latin">Subhaana rabbiyal 'azhiimi wa bihamdih (3×)</span></div>
-        <div class="guide-step"><span class="step-num">6</span> <b>I'tidal</b><br><span class="step-arabic">سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ، رَبَّنَا وَلَكَ الْحَمْدُ</span><span class="step-latin">Sami'allaahu liman hamidah, rabbanaa wa lakal-hamd</span></div>
-        <div class="guide-step"><span class="step-num">7</span> <b>Sujud</b><br><span class="step-arabic">سُبْحَانَ رَبِّيَ الْأَعْلَى وَبِحَمْدِهِ</span><span class="step-latin">Subhaana rabbiyal a'laa wa bihamdih (3×)</span></div>
-        <div class="guide-step"><span class="step-num">8</span> <b>Duduk antara sujud</b><br><span class="step-arabic">رَبِّ اغْفِرْ لِي وَارْحَمْنِي</span><span class="step-latin">Rabbighfir lii warhamni</span></div>
-        <div class="guide-step"><span class="step-num">9</span> <b>Tasyahud Akhir</b><br><span class="step-arabic">التَّحِيَّاتُ لِلَّهِ... أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</span></div>
-        <div class="guide-step"><span class="step-num">10</span> <b>Shalawat Nabi</b><br><span class="step-arabic">اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ</span><span class="step-latin">Allaahumma shalli 'ala muhammad wa 'ala aali muhammad</span></div>
-        <div class="guide-step"><span class="step-num">11</span> <b>Salam</b><br><span class="step-arabic">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ</span><span class="step-latin">As-salaamu 'alaykum wa rahmatullaah (kanan & kiri)</span></div>
+        <div class="doa-title">Urutan & Bacaan Shalat <span style="font-size:0.65em;color:var(--dim);font-weight:400">(HR. Bukhari & Muslim)</span></div>
+
+        <div class="guide-step"><span class="step-num">1</span>
+          <b>Niat</b> — dalam hati sesuai shalat yang dikerjakan
+        </div>
+
+        <div class="guide-step"><span class="step-num">2</span>
+          <b>Takbiratul Ihram</b><br>
+          <span class="step-arabic">اللَّهُ أَكْبَرُ</span>
+          <span class="step-latin">Allahu Akbar.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">3</span>
+          <b>Doa Iftitah</b><br>
+          <span class="step-arabic">اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ، اللَّهُمَّ نَقِّنِي مِنَ الْخَطَايَا كَمَا يُنَقَّى الثَّوْبُ الأَبْيَضُ مِنَ الدَّنَسِ، اللَّهُمَّ اغْسِلْ خَطَايَايَ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ</span>
+          <span class="step-latin">Allahumma baa'id bainii wa baina khathaayaaya kamaa baa'adta bainal masyriqi wal maghrib. Allahumma naqqinii minal khathaayaa kamaa yunaqqats-tsaubul abyadhu minad danas. Allahummaghsil khathaayaaya bil maa-i wats tsalji wal barad.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">4</span>
+          <b>Al-Fatihah</b> — wajib di setiap rakaat
+        </div>
+
+        <div class="guide-step"><span class="step-num">5</span>
+          <b>Ruku'</b> <em>(3×)</em><br>
+          <span class="step-arabic">سُبْحَانَ رَبِّيَ الْعَظِيمِ</span>
+          <span class="step-latin">Subhaana rabbiyal-'azhiim.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">6</span>
+          <b>I'tidal</b><br>
+          <span class="step-arabic">سَمِعَ اللهُ لِمَنْ حَمِدَهُ · رَبَّنَا وَلَكَ الْحَمْدُ</span>
+          <span class="step-latin">Sami'allaahu liman hamidah. Rabbanaa wa lakal-hamd.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">7</span>
+          <b>Sujud</b> <em>(3×)</em><br>
+          <span class="step-arabic">سُبْحَانَ رَبِّيَ الْأَعْلَى</span>
+          <span class="step-latin">Subhaana rabbiyal-a'laa.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">8</span>
+          <b>Duduk antara dua sujud</b><br>
+          <span class="step-arabic">رَبِّ اغْفِرْ لِي، رَبِّ اغْفِرْ لِي</span>
+          <span class="step-latin">Rabbighfir lii, rabbighfir lii.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">9</span>
+          <b>Tasyahud Akhir</b><br>
+          <span class="step-arabic">التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ · السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ · السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ · أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ</span>
+          <span class="step-latin">At-tahiyyaatu lillaahi wash-shalawaatu wath-thayyibaat. Assalaamu 'alaika ayyuhan-nabiyyu wa rahmatullaahi wa barakaatuh. Assalaamu 'alainaa wa 'alaa 'ibaadillaahish-shaalihiin. Asyhadu an laa ilaaha illallaah wa asyhadu anna Muhammadan 'abduhu wa rasuuluh.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">10</span>
+          <b>Shalawat Ibrahim</b><br>
+          <span class="step-arabic">اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ · اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ</span>
+          <span class="step-latin">Allahumma shalli 'alaa Muhammad wa 'alaa aali Muhammad, kamaa shallaita 'alaa Ibraahiim wa 'alaa aali Ibraahiim, innaka Hamiidum Majiid. Allahumma baarik 'alaa Muhammad wa 'alaa aali Muhammad, kamaa baarakta 'alaa Ibraahiim wa 'alaa aali Ibraahiim, innaka Hamiidum Majiid.</span>
+        </div>
+
+        <div class="guide-step"><span class="step-num">11</span>
+          <b>Salam</b> — menoleh kanan lalu kiri<br>
+          <span class="step-arabic">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ</span>
+          <span class="step-latin">Assalaamu 'alaikum wa rahmatullaah.</span>
+        </div>
       </div>`;
   }
 }
