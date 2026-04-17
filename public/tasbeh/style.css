@@ -211,7 +211,7 @@ body {
   padding: 10px 0; margin-bottom: 24px; margin-top: 10px;
   width: 100%;
 }
-.infinity-svg { width: 90%; max-width: 300px; overflow: visible; display: block; margin: 0 auto; }
+.infinity-svg { width: 100%; max-width: 450px; overflow: visible; display: block; margin: 0 auto; padding: 0 10px; box-sizing: border-box; }
 .infinity-path-bg       { fill: none; stroke: rgba(212,175,55,0.12); stroke-width: 3; }
 .infinity-path-progress { fill: none; stroke: none; }
 .prayer-node            { fill: var(--bg); stroke: var(--gold); stroke-width: 2; }
