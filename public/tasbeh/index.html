@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Tasbeh Digital</title>
+  <title>FiveTimes - Premium Spiritual Companion</title>
   <base href="/tasbeh/">
   
   <!-- PWA & SEO -->
-  <meta name="description" content="Tasbeh digital premium dengan jadwal shalat dan kompas kiblat, dioptimalkan untuk cover screen ponsel lipat.">
+  <meta name="description" content="FiveTimes - Pendamping ibadah premium dengan jadwal shalat, kiblat, dan tasbeh digital.">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#D4AF37">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -18,40 +18,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   
-  <!-- Google Ads Script (Placeholder - Ganti ID Ca-Pub dengan yang asli nanti) -->
+  <!-- Google Ads Script (Placeholder) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
   <!-- Styles CSS -->
-  <link rel="stylesheet" href="style.css?v=1.1">
+  <link rel="stylesheet" href="style.css?v=1.2">
 </head>
 <body>
 
   <!-- App Header -->
   <header class="app-header">
-    <h1 id="app-title">Tasbeh</h1>
+    <h1 id="app-title">FiveTimes</h1>
   </header>
 
   <!-- Main Content Container -->
   <main class="app-content">
     
-    <!-- SLOT IKLAN ATAS (Kecil/Native) -->
+    <!-- SLOT IKLAN ATAS -->
     <div class="ad-container ad-top">
-      <!-- <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-XXXXXXXXX"
-           data-ad-slot="XXXXXXXXX"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-           (adsbygoogle = window.adsbygoogle || []).push({});
-      </script> -->
       <span class="ad-placeholder-text">Ad</span>
     </div>
 
     <!-- SECTION 1: TASBEH (Default) -->
     <section id="section-tasbeh" class="view-section active">
       <div class="tasbeh-display">
-        <!-- Circular Progress Ring (Acts acting as a massive tap button) -->
         <button id="btn-tap" class="circular-tap-area" aria-label="Tambah Hitungan">
           <svg class="progress-ring" viewBox="0 0 200 200">
             <defs>
@@ -103,59 +93,55 @@
     <!-- SECTION 3: JADWAL SHALAT -->
     <section id="section-jadwal" class="view-section">
       <div class="jadwal-container">
-        <h2 id="location-name" class="location-title">Lokasi Anda</h2>
-        <p id="hijri-date" class="date-text">...</p>
-        
-        <!-- COUNTDOWN -->
-        <div class="next-prayer-card">
-          <div class="next-prayer-label">Menuju Shalat</div>
-          <div id="next-prayer-name" class="next-prayer-name">--</div>
-          <div id="countdown-timer" class="countdown-timer">--:--:--</div>
+        <!-- Sub-tabs for Jadwal vs Guide -->
+        <div class="section-tabs">
+          <button class="section-tab-btn active" data-tab="jadwal-main">Jadwal</button>
+          <button class="section-tab-btn" data-tab="jadwal-guide">Panduan</button>
         </div>
 
-        <ul id="prayer-list" class="prayer-times-list">
-          <!-- Item diisi oleh JS -->
-          <li class="prayer-item">Subuh <span>-:-</span></li>
-          <li class="prayer-item">Dzuhur <span>-:-</span></li>
-          <li class="prayer-item">Ashar <span>-:-</span></li>
-          <li class="prayer-item">Maghrib <span>-:-</span></li>
-          <li class="prayer-item">Isya <span>-:-</span></li>
-        </ul>
+        <div id="subview-jadwal-main" class="subview active">
+          <h2 id="location-name" class="location-title">Lokasi Anda</h2>
+          
+          <!-- INFINITY 24H VISUAL -->
+          <div class="infinity-clock-wrapper">
+            <svg class="infinity-svg" viewBox="0 0 200 100">
+              <path class="infinity-path-bg" d="M34,62.4 c-17.7,0-32-14.3-32-32s14.3-32,32-32c11.3,0,21.3,5.9,27,14.8l20.4,32.4c5.7,8.9,15.7,14.8,27,14.8c17.7,0,32-14.3,32-32s-14.3-32-32-32 c-11.3,0-21.3,5.9-27,14.8l-20.4,32.4C48.3,56.5,38.3,62.4,34,62.4z"/>
+              <path id="infinity-progress" class="infinity-path-progress" d="M34,62.4 c-17.7,0-32-14.3-32-32s14.3-32,32-32c11.3,0,21.3,5.9,27,14.8l20.4,32.4c5.7,8.9,15.7,14.8,27,14.8c17.7,0,32-14.3,32-32s-14.3-32-32-32 c-11.3,0-21.3,5.9-27,14.8l-20.4,32.4C48.3,56.5,38.3,62.4,34,62.4z"/>
+              <g id="prayer-nodes"></g>
+              <circle id="time-indicator" r="4" fill="var(--accent-gold)" />
+            </svg>
+            <div id="hijri-date" class="date-text">...</div>
+          </div>
 
-        <!-- WIRID SECTION -->
-        <div class="wirid-section">
-          <h3 class="wirid-header">Urutan Wirid Ba'da Shalat</h3>
-          <div class="doa-list">
-            <div class="doa-card">
-              <div class="doa-title">1. Istighfar (3x)</div>
-              <div class="doa-arabic">أَسْتَغْفِرُ اللهَ الْعَظِـيمِ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ</div>
-              <div class="doa-latin">Astaghfirullahal 'azhiim, alladzii laa ilaaha illa huwal hayyul qayyuum wa atuubu ilaih.</div>
-              <div class="doa-translate">"Aku memohon ampun kepada Allah Yang Maha Agung, tiada Tuhan selain Dia Yang Maha Hidup lagi Maha Berdiri Sendiri, dan aku bertaubat kepada-Nya."</div>
-            </div>
+          <!-- COUNTDOWN & NIAT -->
+          <div class="next-prayer-card">
+            <div class="next-prayer-label">Menuju Shalat</div>
+            <div id="next-prayer-name" class="next-prayer-name">--</div>
+            <div id="countdown-timer" class="countdown-timer">--:--:--</div>
             
-            <div class="doa-card">
-              <div class="doa-title">2. Doa Keselamatan</div>
-              <div class="doa-arabic">اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ</div>
-              <div class="doa-latin">Allahumma antas-salaam wa minkas-salaam tabaarakta yaa dzal-jalaali wal-ikraam.</div>
-              <div class="doa-translate">"Ya Allah, Engkau adalah Dzat yang memberi keselamatan, dan dari-Mu-lah segala keselamatan. Maha Pemberi Berkah Engkau, wahai Dzat Yang Maha Agung dan Maha Mulia."</div>
-            </div>
-
-            <div class="doa-card">
-              <div class="doa-title">3. Dzikir Utama (33x)</div>
-              <div class="doa-arabic">سُبْحَانَ اللهِ<br>الْحَمْدُ لِلَّهِ<br>اللهُ أَكْبَرُ</div>
-              <div class="doa-latin">Subhanallah (Maha Suci Allah)<br>Alhamdulillah (Segala Puji Bagi Allah)<br>Allahu Akbar (Allah Maha Besar)</div>
-              <div class="doa-translate">"Masing-masing dibaca 33x. Gunakan menu Tasbeh di kiri bawah untuk menghitungnya dengan mudah."</div>
-            </div>
-            
-            <div class="doa-card">
-              <div class="doa-title">4. Tahlil Penyempurna</div>
-              <div class="doa-arabic">لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ</div>
-              <div class="doa-latin">Laa ilaaha illallahu wahdahu laa syariikalah, lahul mulku wa lahul hamdu wa huwa 'alaa kulli syai'in qadiir.</div>
-              <div class="doa-translate">"Tiada Tuhan selain Allah yang Maha Esa, tiada sekutu bagi-Nya. Bagi-Nya kerajaan dan puji-pujian. Dan Dia Maha Kuasa atas segala sesuatu."</div>
+            <!-- CONTEXTUAL NIAT -->
+            <div id="contextual-niat" class="niat-display">
+              <div class="niat-label">Niat Shalat</div>
+              <div id="niat-arabic" class="niat-arabic"></div>
+              <div id="niat-latin" class="niat-latin"></div>
+              <div id="niat-translate" class="niat-translate"></div>
             </div>
           </div>
+
+          <ul id="prayer-list" class="prayer-times-list">
+            <!-- Item diisi oleh JS -->
+          </ul>
         </div>
 
+        <div id="subview-jadwal-guide" class="subview">
+          <div class="guide-tabs">
+            <button class="guide-tab-btn active" data-guide="wudhu">Wudhu</button>
+            <button class="guide-tab-btn" data-guide="shalat">Shalat</button>
+          </div>
+          <div id="guide-content" class="guide-content">
+             <!-- Diisi oleh JS -->
+          </div>
+        </div>
       </div>
     </section>
 
@@ -163,19 +149,34 @@
     <section id="section-doa" class="view-section">
       <div class="doa-container">
         <h2 class="location-title">Do'a & Surah</h2>
-        
         <div class="doa-subtabs">
           <button class="subtab-btn active" data-doatype="doa">Do'a Pilihan</button>
           <button class="subtab-btn" data-doatype="surah">Surat Pendek</button>
         </div>
+        <div class="doa-list" id="doa-list"></div>
+      </div>
+    </section>
 
-        <div class="doa-list" id="doa-list">
-           <!-- Diisi oleh JS -->
+    <!-- SECTION 5: SETTINGS -->
+    <section id="section-settings" class="view-section">
+      <div class="settings-container">
+        <h2 class="location-title">Setelan</h2>
+        <div class="settings-group">
+          <label for="font-size-slider">Ukuran Font</label>
+          <div class="slider-wrapper">
+            <input type="range" id="font-size-slider" min="1" max="2" step="0.1" value="1.1">
+            <span id="font-size-val">110%</span>
+          </div>
+          <p class="setting-desc">Dioptimalkan untuk Cover Screen ponsel lipat.</p>
+        </div>
+        <div class="settings-footer">
+          <p>FiveTimes v1.2</p>
+          <p>Created with Love by Anugrah</p>
         </div>
       </div>
     </section>
 
-    <!-- FLOATING TASBEH (Visible on non-tasbeh pages) -->
+    <!-- FLOATING TASBEH -->
     <div id="floating-tasbeh" class="floating-tasbeh hidden">
       <span id="floating-count">0</span>
       <div id="floating-cycle" class="floating-badge">0</div>
@@ -198,13 +199,15 @@
       <span>Shalat</span>
     </button>
     <button class="nav-item" data-target="doa">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-      </svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
       <span>Do'a</span>
+    </button>
+    <button class="nav-item" data-target="settings">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Setelan</span>
     </button>
   </nav>
 
-  <script src="app.js?v=1.1"></script>
+  <script src="app.js?v=1.2"></script>
 </body>
 </html>

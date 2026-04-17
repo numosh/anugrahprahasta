@@ -1,8 +1,8 @@
-const CACHE_NAME = 'tasbeh-cache-v3';
+const CACHE_NAME = 'fivetimes-cache-v4';
 const urlsToCache = [
   '/tasbeh/index.html',
-  '/tasbeh/style.css?v=1.1',
-  '/tasbeh/app.js?v=1.1',
+  '/tasbeh/style.css?v=1.2',
+  '/tasbeh/app.js?v=1.2',
   '/tasbeh/icon.svg',
   '/tasbeh/icon-192.png',
   '/tasbeh/icon-512.png',
@@ -13,7 +13,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache v3');
+        console.log('Opened fivetimes cache v4');
         return cache.addAll(urlsToCache);
       })
   );
@@ -22,7 +22,6 @@ self.addEventListener('install', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // Handle directory requests by serving index.html from cache
   if (url.pathname === '/tasbeh/' || url.pathname === '/tasbeh') {
     event.respondWith(
       caches.match('/tasbeh/index.html').then(response => {
@@ -39,7 +38,6 @@ self.addEventListener('fetch', event => {
           return response;
         }
         return fetch(event.request).catch(() => {
-          // If fetch fails (offline/error), try to return index.html for navigation
           if (event.request.mode === 'navigate') {
             return caches.match('/tasbeh/index.html');
           }
