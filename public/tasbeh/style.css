@@ -89,13 +89,15 @@ body {
   flex-direction: column;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   pointer-events: none;
 }
 
 .view-section.active {
   opacity: 1;
   visibility: visible;
+  transform: translateY(0);
   pointer-events: auto;
 }
 
@@ -162,6 +164,8 @@ body {
 
 .ring-progress.glow-active {
   filter: url(#glow);
+  stroke-width: 14;
+  transition: stroke-dashoffset 0.1s linear, stroke-width 0.3s ease, filter 0.3s ease;
 }
 
 .count-wrapper {
@@ -268,13 +272,21 @@ body {
   z-index: 1000;
   cursor: grab;
   user-select: none;
-  touch-action: none; /* Prevent browser handling of drag */
+  touch-action: none;
   transition: transform 0.1s, opacity 0.3s;
+  animation: floatPulse 3s infinite ease-in-out;
+}
+
+@keyframes floatPulse {
+  0% { box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), 0 0 0 0 rgba(212, 175, 55, 0.4); }
+  70% { box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), 0 0 0 15px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), 0 0 0 0 rgba(212, 175, 55, 0); }
 }
 
 .floating-tasbeh:active {
   cursor: grabbing;
   transform: scale(0.9);
+  animation: none;
 }
 
 .floating-tasbeh.hidden {

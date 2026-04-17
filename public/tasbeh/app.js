@@ -488,6 +488,56 @@ const doaListData = [
 
   // Surat Pendek
   {
+    type: "doa",
+    category: "Do'a Pendek",
+    title: "Mohon Ampunan & Rahmat",
+    arabic: "رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ",
+    latin: "Rabbighfir warham wa anta khairur-rahimin",
+    translate: "Ya Tuhanku, ampunilah dan berilah rahmat, Engkau adalah pemberi rahmat yang terbaik."
+  },
+  {
+    type: "doa",
+    category: "Do'a Khusus",
+    title: "Terhindar dari Penyakit & Wabah",
+    arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْبَرَصِ وَالْجُنُونِ وَالْجُذَامِ وَمِنْ سَيِّئِ الْأَسْقَامِ",
+    latin: "Allahumma inni a'udzu bika minal barashi wal jununi wal judzami wa min sayyi'il asqami",
+    translate: "Ya Allah, aku berlindung kepada-Mu dari penyakit kulit, gila, kusta, dan dari segala penyakit yang buruk."
+  },
+  {
+    type: "doa",
+    category: "Do'a Khusus",
+    title: "Perlindungan dari Kesyirikan",
+    arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ أَنْ أُشْرِكَ بِكَ وَأَنَا أَعْلَمُ وَأَسْتَغْفِرُكَ لِمَا لَا أَعْلَمُ",
+    latin: "Allahumma inni a'udzu bika an usyrika bika wa ana a'lamu wa astaghfiruka lima laa a'lamu",
+    translate: "Ya Allah, aku berlindung kepada-Mu dari perbuatan syirik yang aku ketahui, dan aku memohon ampunan-Mu atas apa yang tidak aku ketahui."
+  },
+
+  // Surat Pendek
+  {
+    type: "surah",
+    category: "Surah Pendek",
+    title: "QS. Al-Humazah",
+    arabic: "وَيْلٌ لِّكُلِّ هُمَزَةٍ لُّمَزَةٍ ۝ الَّذِي جَمَعَ مَالًا وَعَدَّدَهُ ۝ يَحْسَبُ أَنَّ مَالَهُ أَخْلَدَهُ ۝ كَلَّا لَيُنبَذَنَّ فِي الْحُطَمَةِ ۝ وَمَا أَدْرَاكَ مَا الْحُطَمَةُ ۝ نَارُ اللَّهِ الْمُوقَدَةُ ۝ الَّتِي تَطَّلِعُ عَلَى الْأَفْئِدَةِ ۝ إِنَّهَا عَلَيْهِم مُّؤْصَدَةٌ ۝ فِي عَمَدٍ مُّمَدَّدَةٍ",
+    latin: "Wailul-likulli humazatil-lumazah. Alladzi jama'a maalaw-wa 'addadah. Yahsabu anna maalahuu akhladah. Kalla layunbadzanna fil-huthamah. Wa maa adraaka mal-huthamah. Naarullaahil-muuqadah. Allatii tath-thali'u 'alal-af-idah. Innaha 'alaihim mu'shadah. Fii 'amadim-mumaddadah.",
+    translate: "Kecelakaanlah bagi setiap pengumpat lagi pencela, yang mengumpulkan harta dan menghitung-hitungnya, dia mengira bahwa hartanya itu dapat mengekalkannya, sekali-kali tidak! Sesungguhnya dia benar-benar akan dilemparkan ke dalam Huthamah. Dan tahukah kamu apa Huthamah itu? (yaitu) api (yang disediakan) Allah yang dinyalakan, yang (membakar) sampai ke hati. Sesungguhnya api itu ditutup rapat atas mereka, (sedang mereka itu) diikat pada tiang-tiang yang panjang."
+  },
+  {
+    type: "surah",
+    category: "Surah Pendek",
+    title: "QS. Al-Fil",
+    arabic: "أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ ۝ أَلَمْ يَجْعَلْ كَيْدَهُمْ فِي تَضْلِيلٍ ۝ وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ ۝ تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ ۝ فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ",
+    latin: "Alam tara kaifa fa'ala rabbuka bi ashhaabil-fiil. Alam yaj'al kaidahum fii tadhliil. Wa arsala 'alaihim thairan abaabiil. Tarmiihim bihijaaratim-min sijjiil. Faja'alahum ka'asfim-ma'kuul.",
+    translate: "Apakah kamu tidak memperhatikan bagaimana Tuhanmu telah bertindak terhadap tentara bergajah? Bukankah Dia telah menjadikan tipu daya mereka (untuk menghancurkan Ka'bah) itu sia-sia? dan Dia mengirimkan kapada mereka burung yang berbondong-bondong, yang melempari mereka dengan batu (berasal) dari tanah yang terbakar, lalu Dia menjadikan mereka seperti daun-daun yang dimakan (ulat)."
+  },
+  {
+    type: "surah",
+    category: "Surah Pendek",
+    title: "QS. Al-Lahab",
+    arabic: "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ ۝ مَا أَغْنَىٰ عَنْهُ مَالُهُ وَمَا كَسَبَ ۝ سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ ۝ وَامْرَأَتُهُ حَمَّالَةَ الْحَطَبِ ۝ فِي جِيدِهَا حَبْلٌ مِّن مَّسَدٍ",
+    latin: "Tabbat yadaa abii lahabiw-watabb. Maa aghnaa 'anhu maaluhuu wa maa kasab. Sayashlaa naaran dzaata lahab. Wamra'atuhuu hammaalatal-hatab. Fii jiidihaa hablum-mim-masad.",
+    translate: "Binasalah kedua tangan Abu Lahab dan sesungguhnya dia akan binasa. Tidaklah berguna baginya hartanya dan apa yang ia usahakan. Kelak dia akan masuk ke dalam api yang bergejolak. Dan (begitu pula) istrinya, pembawa kayu bakar. Yang di lehernya ada tali dari sabu."
+  },
+  {
     type: "surah",
     category: "Surah Pendek",
     title: "QS. Al-Fatihah",
