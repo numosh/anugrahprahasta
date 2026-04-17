@@ -20,6 +20,21 @@ if (fontSlider) {
   fontSlider.addEventListener('input', e => applyFontScale(e.target.value));
 }
 
+// ── MAZHAB PREFERENCE ──
+function getMazhab() { return localStorage.getItem('fivetimes-mazhab') || 'nu'; }
+function setMazhab(v) {
+  localStorage.setItem('fivetimes-mazhab', v);
+  document.querySelectorAll('.mazhab-btn').forEach(b => b.classList.toggle('active', b.dataset.mazhab === v));
+  renderGuideContent(document.querySelector('.guide-tab-btn.active')?.dataset.guide || 'wudhu');
+}
+// init mazhab buttons
+function initMazhabBtns() {
+  document.querySelectorAll('.mazhab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mazhab === getMazhab());
+    b.addEventListener('click', () => setMazhab(b.dataset.mazhab));
+  });
+}
+
 // ── NAVIGATION ──
 const navItems    = document.querySelectorAll('.nav-item');
 const viewSections = document.querySelectorAll('.view-section');
@@ -488,40 +503,82 @@ function initQibla() {
   });
 }
 
-// ── GUIDE CONTENT ──
+// ── GUIDE CONTENT (NU & Muhammadiyah) ──
 function renderGuideContent(type) {
   const content = document.getElementById('guide-content');
   if (!content) return;
+  const m = getMazhab(); // 'nu' | 'muhammadiyah'
+
   if (type === 'wudhu') {
     content.innerHTML = `
       <div class="doa-card">
-        <div class="doa-title">Niat Wudhu <span style="font-size:0.65em;color:var(--dim);font-weight:400">(Mazhab Syafi'i)</span></div>
-        <div class="doa-arabic">نَوَيْتُ الْوُضُوءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِللهِ تَعَالَى</div>
+        <div class="doa-title">Niat Wudhu <span class="src-tag">(Mazhab Syafi'i)</span></div>
+        <div class="doa-arabic">نَوَيْتُ الْوُضُوءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِلَّهِ تَعَالَى</div>
         <div class="doa-latin">Nawaitul wudhu'a liraf'il hadatsil ashghari fardhal lillaahi ta'aala.</div>
         <div class="doa-translate">Aku niat berwudhu untuk menghilangkan hadas kecil, fardu karena Allah Ta'ala.</div>
       </div>
       <div class="guide-steps-card">
         <div class="doa-title">Urutan Berwudhu</div>
         <div class="guide-step"><span class="step-num">1</span> Niat dalam hati sambil membaca Bismillah</div>
-        <div class="guide-step"><span class="step-num">2</span> Basuh kedua telapak tangan 3×</div>
-        <div class="guide-step"><span class="step-num">3</span> Berkumur 3×</div>
-        <div class="guide-step"><span class="step-num">4</span> Hirub air ke hidung lalu keluarkan 3×</div>
-        <div class="guide-step"><span class="step-num">5</span> Basuh seluruh wajah 3×</div>
-        <div class="guide-step"><span class="step-num">6</span> Basuh tangan kanan hingga siku 3×, lalu tangan kiri 3×</div>
-        <div class="guide-step"><span class="step-num">7</span> Usap sebagian kepala 1×</div>
-        <div class="guide-step"><span class="step-num">8</span> Masukkan jari telunjuk ke dalam telinga, ibu jari mengusap belakang telinga 1×</div>
-        <div class="guide-step"><span class="step-num">9</span> Basuh kaki kanan hingga mata kaki 3×, lalu kaki kiri 3×</div>
+        <div class="guide-step"><span class="step-num">2</span> Basuh kedua telapak tangan 3&times;</div>
+        <div class="guide-step"><span class="step-num">3</span> Berkumur 3&times;</div>
+        <div class="guide-step"><span class="step-num">4</span> Hirub air ke hidung lalu keluarkan 3&times;</div>
+        <div class="guide-step"><span class="step-num">5</span> Basuh seluruh wajah 3&times;</div>
+        <div class="guide-step"><span class="step-num">6</span> Basuh tangan kanan hingga siku 3&times;, lalu tangan kiri 3&times;</div>
+        <div class="guide-step"><span class="step-num">7</span> Usap sebagian kepala 1&times;</div>
+        <div class="guide-step"><span class="step-num">8</span> Jari telunjuk masuk telinga, ibu jari usap belakang telinga 1&times;</div>
+        <div class="guide-step"><span class="step-num">9</span> Basuh kaki kanan hingga mata kaki 3&times;, lalu kiri 3&times;</div>
       </div>
       <div class="doa-card">
-        <div class="doa-title">Doa Sesudah Wudhu <span style="font-size:0.65em;color:var(--dim);font-weight:400">(HR. Tirmidzi, shahih)</span></div>
+        <div class="doa-title">Doa Sesudah Wudhu <span class="src-tag">(HR. Tirmidzi, shahih)</span></div>
         <div class="doa-arabic">أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ، اللَّهُمَّ اجْعَلْنِى مِنَ التَّوَّابِينَ وَاجْعَلْنِى مِنَ الْمُتَطَهِّرِينَ</div>
         <div class="doa-latin">Asyhadu an laa ilaaha illallaahu wahdahu laa syariika lahu, wa asyhadu anna Muhammadan 'abduhu wa rasuuluh. Allaahummaj-'alnii minat-tawwaabiina waj-'alnii minal-mutathahhiriin.</div>
-        <div class="doa-translate">Aku bersaksi bahwa tiada Tuhan selain Allah Yang Maha Esa, tiada sekutu bagi-Nya. Dan aku bersaksi bahwa Muhammad adalah hamba dan utusan-Nya. Ya Allah, jadikanlah aku termasuk orang yang bertaubat dan jadikanlah aku termasuk orang yang menyucikan diri.</div>
+        <div class="doa-translate">Aku bersaksi tiada Tuhan selain Allah Yang Maha Esa, tiada sekutu bagi-Nya, dan aku bersaksi Muhammad adalah hamba dan utusan-Nya. Ya Allah, jadikanlah aku dari orang-orang yang bertaubat dan menyucikan diri.</div>
       </div>`;
   } else {
+    // Conditional per mazhab
+    const isNU = m === 'nu';
+
+    const iftitahArab = isNU
+      ? 'اللَّهُ أَكْبَرُ كَبِيرًا وَالْحَمْدُ لِلَّهِ كَثِيرًا وَسُبْحَانَ اللَّهِ بُكْرَةً وَأَصِيلًا، وَجَّهْتُ وَجْهِيَ لِلَّذِي فَطَرَ السَّمَاوَاتِ وَالْأَرْضَ حَنِيفًا مُسْلِمًا، وَمَا أَنَا مِنَ الْمُشْرِكِينَ، إِنَّ صَلَاتِي وَنُسُكِي وَمَحْيَايَ وَمَمَاتِي لِلَّهِ رَبِّ الْعَالَمِينَ، لَا شَرِيكَ لَهُ، وَبِذَلِكَ أُمِرْتُ وَأَنَا مِنَ الْمُسْلِمِينَ'
+      : 'اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ، اللَّهُمَّ نَقِّنِي مِنَ الْخَطَايَا كَمَا يُنَقَّى الثَّوْبُ الْأَبْيَضُ مِنَ الدَّنَسِ، اللَّهُمَّ اغْسِلْ خَطَايَايَ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ';
+
+    const iftitahLatin = isNU
+      ? "Allaahu akbar kabiiran walhamdu lillaahi katsiiran, wa subhaanallaahi bukrataw wa ashiilaa. Wajjahtu wajhiya lilladzii fatharas-samaawaati wal-ardha haniifam-muslimaw wa maa anaa minal-musyrikiin. Inna shalaatii wa nusukii wa mahyaaya wa mamaatii lillaahi rabbil-'aalamiin, laa syariika lah, wa bidzaalika umirtu wa anaa minal-muslimiin."
+      : "Allaahumma baa'id bainii wa baina khathaayaaya kamaa baa'adta bainal-masyriqi wal-maghrib. Allaahumma naqqinii minal-khathaayaa kamaa yunaqqats-tsaubul-abyadhu minad-danas. Allaahummagh-sil khathaayaaya bil-maa-i wats-tsalji wal-barad.";
+
+    const iftitahSrc = isNU ? '(HR. Muslim no. 771 — versi NU)' : '(HR. Bukhari & Muslim — versi Muhammadiyah)';
+
+    const tasyahudArab = isNU
+      ? 'التَّحِيَّاتُ الْمُبَارَكَاتُ الصَّلَوَاتُ الطَّيِّبَاتُ لِلَّهِ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّه'
+      : 'التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ';
+
+    const tasyahudLatin = isNU
+      ? "Attahiyyaatul mubaarakaatush-shalawaatuth-thayyibatul lillaah. Assalaamu 'alaika ayyuhan-nabiyyu wa rahmatullaahi wa barakaatuh. Assalaamu 'alainaa wa 'alaa 'ibaadillaahish-shaalihiin. Asyhadu allaa ilaaha illallaah, wa asyhadu anna Muhammadan rasuulullah."
+      : "Attahiyyaatu lillaahi wash-shalawaatu wath-thayyibaat. Assalaamu 'alaika ayyuhan-nabiyyu wa rahmatullaahi wa barakaatuh. Assalaamu 'alainaa wa 'alaa 'ibaadillaahish-shaalihiin. Asyhadu allaa ilaaha illallaah wa asyhadu anna Muhammadan 'abduhu wa rasuuluh.";
+
+    const tasyahudSrc = isNU ? '(Riwayat Ibnu Abbas — NU)' : '(Riwayat Ibnu Mas\'ud — Muhammadiyah)';
+
+    const shalawatArab = isNU
+      ? 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَى سَيِّدِنَا إِبْرَاهِيمَ وَعَلَى آلِ سَيِّدِنَا إِبْرَاهِيمَ، وَبَارِكْ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ، كَمَا بَارَكْتَ عَلَى سَيِّدِنَا إِبْرَاهِيمَ وَعَلَى آلِ سَيِّدِنَا إِبْرَاهِيمَ فِي الْعَالَمِينَ إِنَّكَ حَمِيدٌ مَجِيدٌ'
+      : 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ، وَبَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ، كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ';
+
+    const shalawatLatin = isNU
+      ? "Allahumma shalli 'alaa sayyidinaa Muhammad wa 'alaa aali sayyidinaa Muhammad, kamaa shallaita 'alaa sayyidinaa Ibraahiim wa 'alaa aali sayyidinaa Ibraahiim. Wa baarik 'alaa sayyidinaa Muhammad wa 'alaa aali sayyidinaa Muhammad, kamaa baarakta 'alaa sayyidinaa Ibraahiim wa 'alaa aali sayyidinaa Ibraahiim, fil-'aalamiina innaka Hamiidum Majiid."
+      : "Allahumma shalli 'alaa Muhammad wa 'alaa aali Muhammad, kamaa shallaita 'alaa Ibraahiim wa 'alaa aali Ibraahiim. Wa baarik 'alaa Muhammad wa 'alaa aali Muhammad, kamaa baarakta 'alaa Ibraahiim wa 'alaa aali Ibraahiim, innaka Hamiidum Majiid.";
+
+    const qunutBlock = isNU ? `
+        <div class="guide-step mazhab-highlight">
+          <span class="step-num">6b</span>
+          <b>Qunut Subuh</b> <span class="src-tag">(Sunnah Muakkad — NU)</span><br>
+          <span class="step-arabic">اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ، وَإِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ، وَلَا يَعِزُّ مَنْ عَادَيْتَ، تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ، فَلَكَ الْحَمْدُ عَلَى مَا قَضَيْتَ، وَأَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ</span>
+          <span class="step-latin">Allaahummahdini fiiman hadait, wa 'aafinii fiiman 'aafait, wa tawallanii fiiman tawallait, wa baarik lii fiimaa a'thait, wa qinii syarra maa qadhait, fa-innaka taqdhii wa laa yuqdha 'alaik, wa innahuu laa yazillu man waalait, wa laa ya'izzu man 'aadait, tabaarakta rabbanaa wa ta'aalait, falakal-hamdu 'alaa maa qadhait, wa astaghfiruka wa atuubu ilaik.</span>
+          <span class="step-note">Dibaca saat i'tidal rakaat ke-2 Shalat Subuh, sebelum sujud.</span>
+        </div>` : '';
+
     content.innerHTML = `
       <div class="guide-steps-card">
-        <div class="doa-title">Urutan & Bacaan Shalat <span style="font-size:0.65em;color:var(--dim);font-weight:400">(HR. Bukhari & Muslim)</span></div>
+        <div class="doa-title">Urutan &amp; Bacaan Shalat</div>
 
         <div class="guide-step"><span class="step-num">1</span>
           <b>Niat</b> — dalam hati sesuai shalat yang dikerjakan
@@ -534,9 +591,9 @@ function renderGuideContent(type) {
         </div>
 
         <div class="guide-step"><span class="step-num">3</span>
-          <b>Doa Iftitah</b><br>
-          <span class="step-arabic">اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ، اللَّهُمَّ نَقِّنِي مِنَ الْخَطَايَا كَمَا يُنَقَّى الثَّوْبُ الأَبْيَضُ مِنَ الدَّنَسِ، اللَّهُمَّ اغْسِلْ خَطَايَايَ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ</span>
-          <span class="step-latin">Allahumma baa'id bainii wa baina khathaayaaya kamaa baa'adta bainal masyriqi wal maghrib. Allahumma naqqinii minal khathaayaa kamaa yunaqqats-tsaubul abyadhu minad danas. Allahummaghsil khathaayaaya bil maa-i wats tsalji wal barad.</span>
+          <b>Doa Iftitah</b> <span class="src-tag">${iftitahSrc}</span><br>
+          <span class="step-arabic">${iftitahArab}</span>
+          <span class="step-latin">${iftitahLatin}</span>
         </div>
 
         <div class="guide-step"><span class="step-num">4</span>
@@ -544,7 +601,7 @@ function renderGuideContent(type) {
         </div>
 
         <div class="guide-step"><span class="step-num">5</span>
-          <b>Ruku'</b> <em>(3×)</em><br>
+          <b>Ruku'</b> <em>(3&times;)</em><br>
           <span class="step-arabic">سُبْحَانَ رَبِّيَ الْعَظِيمِ</span>
           <span class="step-latin">Subhaana rabbiyal-'azhiim.</span>
         </div>
@@ -555,8 +612,10 @@ function renderGuideContent(type) {
           <span class="step-latin">Sami'allaahu liman hamidah. Rabbanaa wa lakal-hamd.</span>
         </div>
 
+        ${qunutBlock}
+
         <div class="guide-step"><span class="step-num">7</span>
-          <b>Sujud</b> <em>(3×)</em><br>
+          <b>Sujud</b> <em>(3&times;)</em><br>
           <span class="step-arabic">سُبْحَانَ رَبِّيَ الْأَعْلَى</span>
           <span class="step-latin">Subhaana rabbiyal-a'laa.</span>
         </div>
@@ -568,15 +627,15 @@ function renderGuideContent(type) {
         </div>
 
         <div class="guide-step"><span class="step-num">9</span>
-          <b>Tasyahud Akhir</b><br>
-          <span class="step-arabic">التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ · السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ · السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ · أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ</span>
-          <span class="step-latin">At-tahiyyaatu lillaahi wash-shalawaatu wath-thayyibaat. Assalaamu 'alaika ayyuhan-nabiyyu wa rahmatullaahi wa barakaatuh. Assalaamu 'alainaa wa 'alaa 'ibaadillaahish-shaalihiin. Asyhadu an laa ilaaha illallaah wa asyhadu anna Muhammadan 'abduhu wa rasuuluh.</span>
+          <b>Tasyahud Akhir</b> <span class="src-tag">${tasyahudSrc}</span><br>
+          <span class="step-arabic">${tasyahudArab}</span>
+          <span class="step-latin">${tasyahudLatin}</span>
         </div>
 
         <div class="guide-step"><span class="step-num">10</span>
           <b>Shalawat Ibrahim</b><br>
-          <span class="step-arabic">اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ · اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ</span>
-          <span class="step-latin">Allahumma shalli 'alaa Muhammad wa 'alaa aali Muhammad, kamaa shallaita 'alaa Ibraahiim wa 'alaa aali Ibraahiim, innaka Hamiidum Majiid. Allahumma baarik 'alaa Muhammad wa 'alaa aali Muhammad, kamaa baarakta 'alaa Ibraahiim wa 'alaa aali Ibraahiim, innaka Hamiidum Majiid.</span>
+          <span class="step-arabic">${shalawatArab}</span>
+          <span class="step-latin">${shalawatLatin}</span>
         </div>
 
         <div class="guide-step"><span class="step-num">11</span>
@@ -629,4 +688,5 @@ renderDoaList();
 renderGuideContent('wudhu');
 renderWiridContent();
 initGuideTabs();
+initMazhabBtns();
 setInterval(renderInfinityClock, 30000);

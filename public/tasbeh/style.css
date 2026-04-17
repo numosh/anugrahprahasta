@@ -1,5 +1,5 @@
 /* ============================================================
-   FIVETIMES — CSS v2.2
+   FIVETIMES — CSS v2.4
    ============================================================ */
 :root {
   --bg:        #030609;
@@ -335,6 +335,45 @@ body {
 }
 .about-version {
   font-size: calc(0.7rem * var(--font-scale)); color: var(--dim);
+}
+
+/* Mazhab Selector */
+.mazhab-selector { display: flex; gap: 10px; margin: 10px 0 6px; }
+.mazhab-btn {
+  flex: 1; padding: 10px 6px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--dim); font-family: var(--f-body);
+  font-size: calc(0.85rem * var(--font-scale)); font-weight: 500;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.mazhab-btn.active {
+  background: var(--gold); color: #000; border-color: var(--gold);
+  font-weight: 700; box-shadow: 0 2px 10px rgba(212,175,55,0.35);
+}
+.mazhab-note {
+  font-size: calc(0.7rem * var(--font-scale)); color: var(--dim);
+  margin-top: 4px; line-height: 1.5;
+}
+
+/* Source tag in steps */
+.src-tag {
+  font-size: 0.65em; color: var(--dim); font-weight: 400;
+  font-style: italic; font-family: var(--f-body);
+}
+
+/* Step footnote */
+.step-note {
+  display: block; font-size: calc(0.7rem * var(--font-scale));
+  color: var(--gold); opacity: 0.7; margin-top: 4px;
+  font-style: italic;
+}
+
+/* Mazhab-specific highlighted step (Qunut) */
+.mazhab-highlight {
+  background: rgba(212,175,55,0.05);
+  border-left: 3px solid var(--gold);
+  border-radius: 10px;
+  padding-left: 12px;
 }
 
 /* ── DOA / SURAH ── */
