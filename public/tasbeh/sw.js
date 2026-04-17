@@ -1,6 +1,6 @@
-const CACHE_NAME = 'fivetimes-cache-v9';
+const CACHE_NAME = 'fivetimes-cache-v10';
 const STATIC_ASSETS = [
-  '/tasbeh/',
+  '/tasbeh',
   '/tasbeh/index.html',
   '/tasbeh/style.css?v=2.9',
   '/tasbeh/app.js?v=2.9',
@@ -31,8 +31,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Navigate to root -> serve index.html
-  if (event.request.mode === 'navigate') {
+  if (url.pathname === '/tasbeh' || url.pathname === '/tasbeh/') {
     event.respondWith(
       caches.match('/tasbeh/index.html').then(r => r || fetch(event.request))
     );
