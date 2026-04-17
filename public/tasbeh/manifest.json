@@ -1,28 +1,33 @@
 {
-  "name": "FiveTimes",
+  "name": "FiveTimes – Pendamping Ibadah",
   "short_name": "FiveTimes",
-  "description": "Premium spiritual companion with prayer times, qibla, and tasbeh.",
+  "description": "Jadwal shalat, arah kiblat, tasbeh digital, dan panduan ibadah lengkap.",
   "start_url": "/tasbeh/index.html",
   "scope": "/tasbeh/",
   "display": "standalone",
   "background_color": "#030609",
   "theme_color": "#D4AF37",
   "orientation": "portrait",
+  "lang": "id",
+  "categories": ["lifestyle", "utilities"],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }
