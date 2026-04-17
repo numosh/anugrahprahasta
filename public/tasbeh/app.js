@@ -86,10 +86,16 @@ const niatData = {
 // ── DOA DATA ──
 const doaData = [
   {
-    title: 'Hasbunallah wa Ni\'mal Wakeel',
-    arabic: 'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
-    latin:  "Hasbunallaahu wa ni'mal wakiil.",
-    translate: 'Cukuplah Allah menjadi Penolong kami, dan Allah adalah sebaik-baik Pelindung.'
+    title: 'Perlindungan & Tawakal (QS. Ali Imran: 173 + Al-Anfal: 40)',
+    arabic: 'حَسْبُنَا اللهُ وَنِعْمَ الْوَكِيْلُ، نِعْمَ الْمَوْلَى وَنِعْمَ النَّصِيْرُ',
+    latin:  "Hasbunallaahu wa ni'mal wakiil, ni'mal mawlaa wa ni'man nashiir.",
+    translate: 'Cukuplah Allah bagi kami dan Dia sebaik-baik pelindung; sebaik-baik Tuhan penolong, dan sebaik-baik penolong. (Dibaca saat sempit & kesulitan)'
+  },
+  {
+    title: 'Mohon Ampunan — Doa Nabi Adam (QS. Al-A\'raf: 23)',
+    arabic: 'رَبَّنَا ظَلَمْنَآ أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ ٱلْخَٰسِرِينَ',
+    latin:  "Rabbana dzalamna anfusana wa il-lam taghfir lana wa tarhamna lanakunanna minal-khaasiriin.",
+    translate: 'Ya Tuhan kami, kami telah menzalimi diri sendiri. Jika Engkau tidak mengampuni dan merahmati kami, niscaya kami termasuk orang yang rugi.'
   },
   {
     title: 'Doa Kelancaran Rezeki',
@@ -474,54 +480,74 @@ function renderGuideContent(type) {
         <div class="doa-latin">Nawaitul wudhuu-a liraf'il hadatsil ashghari fardhan lillaahi ta'aalaa.</div>
         <div class="doa-translate">Aku niat wudhu untuk menghilangkan hadas kecil, fardhu karena Allah Ta'ala.</div>
       </div>
-      <div class="doa-card">
+      <div class="guide-steps-card">
         <div class="doa-title">Urutan Berwudhu</div>
-        <ol class="guide-list">
-          <li>Niat dalam hati</li><li>Basuh kedua telapak tangan 3×</li>
-          <li>Berkumur 3×</li><li>Bersihkan hidung 3×</li><li>Basuh wajah 3×</li>
-          <li>Basuh tangan hingga siku (kanan dulu) 3×</li>
-          <li>Usap sebagian kepala 1×</li><li>Usap kedua telinga 1×</li>
-          <li>Basuh kaki hingga mata kaki (kanan dulu) 3×</li>
-        </ol>
+        <div class="guide-step"><span class="step-num">1</span> Niat dalam hati</div>
+        <div class="guide-step"><span class="step-num">2</span> Basuh telapak tangan 3×</div>
+        <div class="guide-step"><span class="step-num">3</span> Berkumur 3×</div>
+        <div class="guide-step"><span class="step-num">4</span> Bersihkan hidung 3×</div>
+        <div class="guide-step"><span class="step-num">5</span> Basuh wajah 3×</div>
+        <div class="guide-step"><span class="step-num">6</span> Basuh tangan hingga siku (kanan dulu) 3×</div>
+        <div class="guide-step"><span class="step-num">7</span> Usap sebagian kepala 1×</div>
+        <div class="guide-step"><span class="step-num">8</span> Usap telinga 1×</div>
+        <div class="guide-step"><span class="step-num">9</span> Basuh kaki hingga mata kaki (kanan dulu) 3×</div>
       </div>
       <div class="doa-card">
         <div class="doa-title">Doa Sesudah Wudhu</div>
         <div class="doa-arabic">أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ</div>
         <div class="doa-latin">Asyhadu allaa ilaaha illallaahu wahdahu laa syariika lahu wa asyhadu anna muhammadan 'abduhu wa rasuuluh.</div>
-        <div class="doa-translate">Aku bersaksi tiada Tuhan selain Allah, Yang Maha Esa, tiada sekutu bagi-Nya, dan aku bersaksi bahwa Muhammad adalah hamba dan utusan-Nya.</div>
       </div>`;
   } else {
     content.innerHTML = `
-      <div class="doa-card">
-        <div class="doa-title">Rukun Shalat (13)</div>
-        <ol class="guide-list">
-          <li>Niat</li><li>Berdiri tegak (jika mampu)</li><li>Takbiratul ihram</li>
-          <li>Membaca Al-Fatihah</li><li>Ruku' dengan tuma'ninah</li>
-          <li>I'tidal dengan tuma'ninah</li><li>Sujud 2× dengan tuma'ninah</li>
-          <li>Duduk antara dua sujud</li><li>Duduk tahiyat akhir</li>
-          <li>Membaca tasyahud akhir</li><li>Membaca shalawat Nabi</li>
-          <li>Salam pertama</li><li>Tertib (berurutan)</li>
-        </ol>
-      </div>
-      <div class="doa-card">
-        <div class="doa-title">Bacaan Ruku'</div>
-        <div class="doa-arabic">سُبْحَانَ رَبِّيَ الْعَظِيمِ وَبِحَمْدِهِ</div>
-        <div class="doa-latin">Subhaana rabbiyal 'azhiimi wa bihamdih.</div>
-        <div class="doa-translate">Maha Suci Tuhanku Yang Maha Agung, dan dengan memuji-Nya. (3×)</div>
-      </div>
-      <div class="doa-card">
-        <div class="doa-title">Bacaan Sujud</div>
-        <div class="doa-arabic">سُبْحَانَ رَبِّيَ الْأَعْلَى وَبِحَمْدِهِ</div>
-        <div class="doa-latin">Subhaana rabbiyal a'laa wa bihamdih.</div>
-        <div class="doa-translate">Maha Suci Tuhanku Yang Maha Tinggi, dan dengan memuji-Nya. (3×)</div>
-      </div>
-      <div class="doa-card">
-        <div class="doa-title">Tasyahud Akhir</div>
-        <div class="doa-arabic">التَّحِيَّاتُ الْمُبَارَكَاتُ الصَّلَوَاتُ الطَّيِّبَاتُ لِلَّهِ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</div>
-        <div class="doa-latin">At-tahiyyaatul mubaarakaatush-shalawaatuth-thayyibaatu lillaah. As-salaamu 'alayka ayyuhan-nabiyyu wa rahmatullaahi wa barakaatuh. As-salaamu 'alaynaa wa 'alaa 'ibaadillaahish-shaalihiin. Asyhadu allaa ilaaha illallaahu wa asyhadu anna muhammadan rasuulullaah.</div>
-        <div class="doa-translate">Bacaan tahiyat akhir untuk rakaat terakhir sebelum salam.</div>
+      <div class="guide-steps-card">
+        <div class="doa-title">Urutan & Bacaan Shalat</div>
+        <div class="guide-step"><span class="step-num">1</span> <b>Niat</b> — dalam hati sesuai shalat</div>
+        <div class="guide-step"><span class="step-num">2</span> <b>Takbiratul Ihram</b><br><span class="step-arabic">اللَّهُ أَكْبَرُ</span><span class="step-latin">Allaahu Akbar</span></div>
+        <div class="guide-step"><span class="step-num">3</span> <b>Doa Iftitah</b><br><span class="step-arabic">اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ...</span><span class="step-latin">Allaahumma baa'id baynii wa bayna khathaayaaya...</span></div>
+        <div class="guide-step"><span class="step-num">4</span> <b>Al-Fatihah</b> — (wajib setiap rakaat)</div>
+        <div class="guide-step"><span class="step-num">5</span> <b>Ruku'</b><br><span class="step-arabic">سُبْحَانَ رَبِّيَ الْعَظِيمِ وَبِحَمْدِهِ</span><span class="step-latin">Subhaana rabbiyal 'azhiimi wa bihamdih (3×)</span></div>
+        <div class="guide-step"><span class="step-num">6</span> <b>I'tidal</b><br><span class="step-arabic">سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ، رَبَّنَا وَلَكَ الْحَمْدُ</span><span class="step-latin">Sami'allaahu liman hamidah, rabbanaa wa lakal-hamd</span></div>
+        <div class="guide-step"><span class="step-num">7</span> <b>Sujud</b><br><span class="step-arabic">سُبْحَانَ رَبِّيَ الْأَعْلَى وَبِحَمْدِهِ</span><span class="step-latin">Subhaana rabbiyal a'laa wa bihamdih (3×)</span></div>
+        <div class="guide-step"><span class="step-num">8</span> <b>Duduk antara sujud</b><br><span class="step-arabic">رَبِّ اغْفِرْ لِي وَارْحَمْنِي</span><span class="step-latin">Rabbighfir lii warhamni</span></div>
+        <div class="guide-step"><span class="step-num">9</span> <b>Tasyahud Akhir</b><br><span class="step-arabic">التَّحِيَّاتُ لِلَّهِ... أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</span></div>
+        <div class="guide-step"><span class="step-num">10</span> <b>Shalawat Nabi</b><br><span class="step-arabic">اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ</span><span class="step-latin">Allaahumma shalli 'ala muhammad wa 'ala aali muhammad</span></div>
+        <div class="guide-step"><span class="step-num">11</span> <b>Salam</b><br><span class="step-arabic">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ</span><span class="step-latin">As-salaamu 'alaykum wa rahmatullaah (kanan & kiri)</span></div>
       </div>`;
   }
+}
+
+// ── WIRID CONTENT ──
+function renderWiridContent() {
+  const container = document.getElementById('wirid-content');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="wirid-header">Dzikir Setelah Shalat Fardhu</div>
+    <div class="wirid-item">
+      <div class="wirid-arabic">أَسْتَغْفِرُ اللهَ (٣×)</div>
+      <div class="wirid-latin">Astaghfirullaah (3×)</div>
+      <div class="wirid-note">HR. Muslim no. 591</div>
+    </div>
+    <div class="wirid-item">
+      <div class="wirid-arabic">اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ</div>
+      <div class="wirid-latin">Allaahumma antas-salaam, wa minkas-salaam, tabaarakta yaa dzal-jalaali wal-ikraam.</div>
+      <div class="wirid-note">HR. Muslim no. 591</div>
+    </div>
+    <div class="wirid-item">
+      <div class="wirid-arabic">لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ</div>
+      <div class="wirid-latin">Laa ilaaha illallaahu wahdahu laa syariikalah, lahul-mulku walahul-hamdu wahuwa 'alaa kulli syai-in qadiir.</div>
+      <div class="wirid-note">HR. Bukhari no. 844, Muslim no. 593</div>
+    </div>
+    <div class="wirid-item">
+      <div class="wirid-arabic">سُبْحَانَ اللهِ (٣٣×) &nbsp; الْحَمْدُ لِلَّهِ (٣٣×) &nbsp; اللهُ أَكْبَرُ (٣٣×)</div>
+      <div class="wirid-latin">Subhanallah (33×) — Alhamdulillah (33×) — Allahu Akbar (33×)</div>
+      <div class="wirid-note">HR. Muslim no. 597</div>
+    </div>
+    <div class="wirid-item">
+      <div class="wirid-arabic">آيَةُ الْكُرْسِيِّ</div>
+      <div class="wirid-latin">Baca Ayat Kursi (QS. Al-Baqarah: 255)</div>
+      <div class="wirid-note">HR. An-Nasa'i, shahih menurut Ibnu Hibban</div>
+    </div>
+  `;
 }
 
 // ── INIT ALL ──
@@ -529,5 +555,6 @@ initQibla();
 updateTasbehUI();
 renderDoaList();
 renderGuideContent('wudhu');
+renderWiridContent();
 initGuideTabs();
 setInterval(renderInfinityClock, 30000);
