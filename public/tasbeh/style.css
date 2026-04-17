@@ -208,7 +208,7 @@ body {
 /* Infinity Clock SVG - taller viewBox gives more room for labels */
 .infinity-clock-wrapper {
   display: flex; justify-content: center; align-items: center;
-  padding: 6px 0 4px; margin-bottom: 4px;
+  padding: 10px 0; margin-bottom: 24px; margin-top: 10px;
   width: 100%;
 }
 .infinity-svg { width: 90%; max-width: 300px; overflow: visible; display: block; margin: 0 auto; }
